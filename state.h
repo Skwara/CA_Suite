@@ -17,6 +17,7 @@ public:
     QColor color;
     std::vector<double> values;
     //List<Transition> transitions;
+	//Test
 };
 
 #endif // STATE_H
