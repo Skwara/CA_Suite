@@ -51,6 +51,38 @@ void ConfigWindow::on_button_addProp_clicked()
     layout_fields->addRow(name, value);
 }
 
+void ConfigWindow::on_button_removeProp_clicked()
+{
+    if (fieldsList.size() > 0) {
+        delete fieldsList[fieldsList.size() - 1].first;
+        delete fieldsList[fieldsList.size() - 1].second;
+        fieldsList.pop_back();
+        for (unsigned i = 0; i < statesListInfo.size(); i++) {
+            if (!statesListInfo[i].values.empty()) {
+                statesListInfo[i].values.pop_back();
+            }
+        }
+    }
+}
+
+void ConfigWindow::on_button_removeState_clicked()
+{
+    uint removedStateId = (uint)ui->spinBox_id->value();
+    if (statesListInfo.size() > 0) {
+        if ((uint)removedStateId < statesListInfo.size()) {
+            delete statesList[removedStateId];
+            statesListInfo.erase(statesListInfo.begin()+removedStateId);
+            statesList.erase(statesList.begin()+removedStateId);
+            ui->spinBox_id->setValue(removedStateId - 1);
+            for (uint i = removedStateId; i < statesListInfo.size(); ++i) {
+                statesListInfo[i].id--;
+                statesList[i]->setText( QString("%1: %2").arg(statesListInfo[i].id).arg(statesListInfo[i].name.c_str()) );
+            }
+        }
+    }
+    setDefaultState();
+}
+
 void ConfigWindow::on_slider_R_valueChanged(int value)
 {
     setColorLabel(value, ui->slider_G->value(), ui->slider_B->value() );
@@ -159,36 +191,4 @@ void ConfigWindow::setDefaultState() {
     for (unsigned j = 0; j < fieldsList.size(); j++) {
         fieldsList[j].second->setValue(0);
     }
-}
-
-void ConfigWindow::on_button_removeProp_clicked()
-{
-    if (fieldsList.size() > 0) {
-        delete fieldsList[fieldsList.size() - 1].first;
-        delete fieldsList[fieldsList.size() - 1].second;
-        fieldsList.pop_back();
-        for (unsigned i = 0; i < statesListInfo.size(); i++) {
-            if (!statesListInfo[i].values.empty()) {
-                statesListInfo[i].values.pop_back();
-            }
-        }
-    }
-}
-
-void ConfigWindow::on_button_removeState_clicked()
-{
-    uint removedStateId = (uint)ui->spinBox_id->value();
-    if (statesListInfo.size() > 0) {
-        if ((uint)removedStateId < statesListInfo.size()) {
-            delete statesList[removedStateId];
-            statesListInfo.erase(statesListInfo.begin()+removedStateId);
-            statesList.erase(statesList.begin()+removedStateId);
-            ui->spinBox_id->setValue(removedStateId - 1);
-            for (uint i = removedStateId; i < statesListInfo.size(); ++i) {
-                statesListInfo[i].id--;
-                statesList[i]->setText( QString("%1: %2").arg(statesListInfo[i].id).arg(statesListInfo[i].name.c_str()) );
-            }
-        }
-    }
-    setDefaultState();
 }
