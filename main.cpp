@@ -10,5 +10,4 @@ int main(int argc, char *argv[])
     return a.exec();
 }
 
-// zalozylem ze id jest unikatowe i stale, usuwac mozna (stan) np jeden ost, bo zmienic jeden wewnatrz jest jak stworzyc nowy
-// miales racje zeby nie trzymac wartosci w liscie par, tylko w listach jednoelemtnowych [nieoptymalne zuzycie pamieci na kopiowanie nazw pol i irytujaca psrawa z apsiem]
+// mozna by zmienic ramke na domyslne tlo, wtedy wygladaloby jakby byl wcisniety, analogiczny efekt jest dla czarnego klacka z biala ramka

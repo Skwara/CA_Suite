@@ -39,29 +39,49 @@ private slots:
     void stateButtonAction_clicked();
     void saveButtonAction_clicked();
 
-
     void on_button_removeProp_clicked();
-
     void on_button_removeState_clicked();
+
+    void on_configTabs_currentChanged(int index);
+
+    void on_button_addTarget_clicked();
+    void dialogTargetButtonAction_clicked();
+    void dialogButtonAction_clicked();
+    void on_button_removeTarget_clicked();
 
 private:
     Ui::ConfigWindow *ui;
 
     QFormLayout* layout_fields;
     QVBoxLayout* layout_states;
+    QVBoxLayout* layout_logic_states;
+    QVBoxLayout* layout_logic_targets;
 
     std::vector< std::pair<QLineEdit*, QDoubleSpinBox*> > fieldsList;
     std::vector<QPushButton*> statesList;
+    std::vector<QPushButton*> statesLogicList;
+    std::vector<QPushButton*> targetsDialogList;
+    std::vector<QPushButton*> targetsList;
     std::vector<State> statesListInfo;
 
-    void setColorLabel(int r, int g, int b);
+    int maxStatesLineNumber;
+
+    QPushButton* createStateButton(State s);
     void savePushButtonColor(QPushButton* pb, int r, int g, int b);
+
+    void initStatesBookmark();
+    void setColorLabel(int r, int g, int b);
     void activePushButton(QPushButton* stateButton, bool active);
-    void addStateToLayout(QPushButton* stateButton);
+    void addStateToLayout(QPushButton* stateButton, int pozition);
+    int getStatesLineNumber();
     State getCurrentState();
     void setDefaultState();
     void resizeEvent(QResizeEvent* event);
+    void repaintStatesLayout();
 
+    void initLogicBookmark();
+    void addStateToLogic(QPushButton* stateButton);
+    void removeStateFromLogic(int removedStateId);
 };
 
 #endif // CONFIGWINDOW_H
