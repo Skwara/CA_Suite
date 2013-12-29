@@ -3,6 +3,8 @@
 
 #include <iostream>
 
+#include <QPalette>
+
 ConfigWindow::ConfigWindow(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::ConfigWindow)
@@ -15,7 +17,7 @@ ConfigWindow::ConfigWindow(QWidget *parent) :
     ui->scrollArea_fields->widget()->setLayout(layout_fields);
 
     // konfiguracja scrollArea'i dla zapisanych juz stanow
-    layout_states = new QGridLayout();
+    layout_states = new QVBoxLayout();
     layout_states->setAlignment(Qt::AlignLeft);
     layout_states->setAlignment(Qt::AlignTop);
     ui->scrollArea_states->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
@@ -109,14 +111,15 @@ void ConfigWindow::on_button_addState_clicked()
 
     savePushButtonColor(stateButton, ui->slider_R->value(), ui->slider_G->value(), ui->slider_B->value());
 
-    stateButton->setMinimumHeight(60);
-    stateButton->setMaximumHeight(60);
-    stateButton->setMinimumWidth(60);
-    stateButton->setMaximumWidth(60);
+    stateButton->setMinimumHeight(STATE_SHAPE_SIZE);
+    stateButton->setMaximumHeight(STATE_SHAPE_SIZE);
+    stateButton->setMinimumWidth(STATE_SHAPE_SIZE);
+    stateButton->setMaximumWidth(STATE_SHAPE_SIZE);
     connect( stateButton, SIGNAL(clicked()), this, SLOT(stateButtonAction_clicked()) );
 
     statesList.push_back(stateButton);
-    layout_states->addWidget(stateButton);
+    //layout_states->addWidget(stateButton);
+    addStateToLayout(stateButton);
 
     statesListInfo.push_back(getCurrentState());
 
@@ -125,11 +128,45 @@ void ConfigWindow::on_button_addState_clicked()
 
 // ustawienie koloru tla i czcionki dla przyciskow stanu
 void ConfigWindow::savePushButtonColor(QPushButton* stateButton, int r, int g, int b) {
-    if (r + b + g < 383) {
-        stateButton->setStyleSheet( QString("background-color: rgb( %1,%2,%3 ); color: rgb(255, 255, 255)").arg(r).arg(g).arg(b) );
+    if (r + b + g < FONT_COLOR_THRESHOLD) {
+        stateButton->setStyleSheet( QString("background-color: rgb( %1,%2,%3 ); color: rgb(255, 255, 255); border: 0px").arg(r).arg(g).arg(b) );
     } else {
-        stateButton->setStyleSheet( QString("background-color: rgb( %1,%2,%3 )").arg(r).arg(g).arg(b) );
+        stateButton->setStyleSheet( QString("background-color: rgb( %1,%2,%3 ); border: 0px").arg(r).arg(g).arg(b) );
     }
+}
+
+void ConfigWindow::activePushButton(QPushButton* stateButton, bool active) {
+    int r = stateButton->palette().background().color().red();
+    int g = stateButton->palette().background().color().green();
+    int b = stateButton->palette().background().color().blue();
+    if (active) {
+        if (r + g + b < FONT_COLOR_THRESHOLD) {
+            stateButton->setStyleSheet(QString("background-color: rgb( %1,%2,%3 ); color: rgb(255, 255, 255); border: 2px solid #ffffff").arg(r).arg(g).arg(b));
+        } else {
+            stateButton->setStyleSheet(QString("background-color: rgb( %1,%2,%3 ); border: 2px solid #000000").arg(r).arg(g).arg(b));
+        }
+    } else {
+        savePushButtonColor(stateButton, r, g, b);
+    }
+}
+
+void ConfigWindow::addStateToLayout(QPushButton* stateButton) {
+//    QHBoxLayout* hl = new QHBoxLayout();
+//    hl->setAlignment(Qt::AlignLeft);
+//    layout_states->addLayout(hl);
+//    hl->addWidget(stateButton);
+
+    if ( (ui->scrollArea_states->width() < 60*lastLayoutCount + 5*lastLayoutCount) || (statesLayoutCount == 0) ){
+          QHBoxLayout* hl = new QHBoxLayout();
+          statesLayout->addLayout(hl);
+          hl->addWidget(pb);
+          hl->setAlignment(Qt::AlignLeft);
+          lastLayoutCount=0;
+          statesLayoutCount++;
+      } else {
+          lastLayoutCount++;
+          ( (QHBoxLayout*) statesLayout->itemAt(statesLayoutCount - 1) )->addWidget(pb);
+      }
 }
 
 // pobiera ustawienia aktualnie wyswietlanego stanu
@@ -148,17 +185,20 @@ void ConfigWindow::stateButtonAction_clicked() {
     for (unsigned i = 0; i < statesListInfo.size(); i++) {
         // sprawdzenie, ktory przycisk zostal wcisniety
         if ( layout_states->itemAt(i)->widget() == sender() ) {
+            //wylaczenie ramki poprzedniego zaznaczonego stanu
+            if ((uint)ui->spinBox_id->value() < statesList.size()) {
+                activePushButton(statesList[ui->spinBox_id->value()], false);
+            }
             // wczytanie wartosci z zapisanego juz stanu
             ui->spinBox_id->setValue(statesListInfo[i].id);
             ui->lineEdit_name->setText(statesListInfo[i].name.c_str());
             ui->spinBox_B->setValue(statesListInfo[i].color.blue());
             ui->spinBox_G->setValue(statesListInfo[i].color.green());
             ui->spinBox_R->setValue(statesListInfo[i].color.red());
-            if (!statesListInfo[i].values.empty()) { // chyba niepotrzebne
-                for (unsigned j = 0; j < statesListInfo[i].values.size(); j++) {
-                    fieldsList[j].second->setValue(statesListInfo[i].values[j]);
-                }
+            for (unsigned j = 0; j < statesListInfo[i].values.size(); j++) {
+                fieldsList[j].second->setValue(statesListInfo[i].values[j]);
             }
+            activePushButton((QPushButton*)sender(), true);
             break;
         }
     }
@@ -178,6 +218,8 @@ void ConfigWindow::saveButtonAction_clicked() {
     savePushButtonColor(pb, s.color.red(), s.color.green(), s.color.blue());
     setDefaultState();
 
+    activePushButton(pb, false);
+
     disconnect( ui->button_addState, SIGNAL(clicked()), this, SLOT(saveButtonAction_clicked()) );
     connect( ui->button_addState, SIGNAL(clicked()), this, SLOT(on_button_addState_clicked()) );
 }
@@ -191,4 +233,8 @@ void ConfigWindow::setDefaultState() {
     for (unsigned j = 0; j < fieldsList.size(); j++) {
         fieldsList[j].second->setValue(0);
     }
+}
+
+void ConfigWindow::resizeEvent(QResizeEvent* event) {
+    std::cout << scroll << std::endl;
 }

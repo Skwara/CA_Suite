@@ -13,6 +13,9 @@
 
 #include "state.h"
 
+#define FONT_COLOR_THRESHOLD 250
+#define STATE_SHAPE_SIZE 60
+
 namespace Ui {
 class ConfigWindow;
 }
@@ -45,7 +48,7 @@ private:
     Ui::ConfigWindow *ui;
 
     QFormLayout* layout_fields;
-    QGridLayout* layout_states;
+    QVBoxLayout* layout_states;
 
     std::vector< std::pair<QLineEdit*, QDoubleSpinBox*> > fieldsList;
     std::vector<QPushButton*> statesList;
@@ -53,8 +56,11 @@ private:
 
     void setColorLabel(int r, int g, int b);
     void savePushButtonColor(QPushButton* pb, int r, int g, int b);
+    void activePushButton(QPushButton* stateButton, bool active);
+    void addStateToLayout(QPushButton* stateButton);
     State getCurrentState();
     void setDefaultState();
+    void resizeEvent(QResizeEvent* event);
 
 };
 
