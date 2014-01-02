@@ -11,3 +11,4 @@ int main(int argc, char *argv[])
 }
 
 // mozna by zmienic ramke na domyslne tlo, wtedy wygladaloby jakby byl wcisniety, analogiczny efekt jest dla czarnego klacka z biala ramka
+// moze byc problem z serializacja vectorow, mozna by recznie ja zdefiniowac, np przepisac do listy

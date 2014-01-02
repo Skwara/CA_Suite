@@ -3,9 +3,10 @@
 
 #include <iostream>
 #include <vector>
-#include <utility>
 
 #include <QColor>
+
+#include "transition.h"
 
 class State
 {
@@ -16,7 +17,7 @@ public:
     std::string name;
     QColor color;
     std::vector<double> values;
-    //List<Transition> transitions;
+    std::vector<Transition> transitions;
 	//Test
 };
 

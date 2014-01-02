@@ -46,6 +46,31 @@ void ConfigWindow::savePushButtonColor(QPushButton* stateButton, int r, int g, i
     }
 }
 
+void ConfigWindow::activePushButton(QPushButton* stateButton, bool active) {
+    int r = stateButton->palette().background().color().red();
+    int g = stateButton->palette().background().color().green();
+    int b = stateButton->palette().background().color().blue();
+    if (active) {
+        if (r + g + b < FONT_COLOR_THRESHOLD) {
+            stateButton->setStyleSheet(QString("background-color: rgb( %1,%2,%3 ); color: rgb(255, 255, 255); border: 2px solid #ffffff").arg(r).arg(g).arg(b));
+        } else {
+            stateButton->setStyleSheet(QString("background-color: rgb( %1,%2,%3 ); border: 2px solid #000000").arg(r).arg(g).arg(b));
+        }
+    } else {
+        savePushButtonColor(stateButton, r, g, b);
+    }
+}
+// usuwa button z listy state'ow, przesuwa idki
+void ConfigWindow::removeStateButton(std::vector<QPushButton*>& buttonsList, int removedStateId) {
+    if ((uint) removedStateId < buttonsList.size()) {
+        delete buttonsList[removedStateId];
+        buttonsList.erase(buttonsList.begin()+removedStateId);
+        for (uint i = removedStateId; i < buttonsList.size(); ++i) {
+            buttonsList[i]->setText( QString("%1").arg(i) );
+        }
+    }
+}
+
 //###########################################
 // zakladaka STATES
 //###########################################
@@ -105,20 +130,20 @@ void ConfigWindow::on_button_removeState_clicked()
     uint removedStateId = (uint)ui->spinBox_id->value();
     if (statesListInfo.size() > 0) {
         if ((uint)removedStateId < statesListInfo.size()) {
-            delete statesList[removedStateId];
             statesListInfo.erase(statesListInfo.begin()+removedStateId);
-            statesList.erase(statesList.begin()+removedStateId);
             ui->spinBox_id->setValue(removedStateId - 1);
             for (uint i = removedStateId; i < statesListInfo.size(); ++i) {
                 statesListInfo[i].id--;
-                statesList[i]->setText( QString("%1").arg(statesListInfo[i].id) );
             }
         }
+        removeStateButton(statesList, removedStateId);
     }
     setDefaultState();
-    ui->button_addState->setText("Add State");
-    disconnect( ui->button_addState, SIGNAL(clicked()), this, SLOT(saveButtonAction_clicked()) );
-    connect( ui->button_addState, SIGNAL(clicked()), this, SLOT(on_button_addState_clicked()) );
+    if (ui->button_addState->text() != "Add State") {
+        ui->button_addState->setText("Add State");
+        disconnect( ui->button_addState, SIGNAL(clicked()), this, SLOT(saveButtonAction_clicked()) );
+        connect( ui->button_addState, SIGNAL(clicked()), this, SLOT(on_button_addState_clicked()) );
+    }
     repaintStatesLayout();
     removeStateFromLogic(removedStateId);
 }
@@ -149,7 +174,7 @@ void ConfigWindow::on_button_addState_clicked()
     QPushButton* stateButton = createStateButton(s);
     connect( stateButton, SIGNAL(clicked()), this, SLOT(stateButtonAction_clicked()) );
 
-    addStateToLogic(createStateButton(s));
+    addStateToLogic(s);
 
     addStateToLayout(stateButton, statesList.size());
     statesList.push_back(stateButton);  
@@ -199,21 +224,6 @@ void ConfigWindow::saveButtonAction_clicked() {
     ui->button_addState->setText("Add State");
     disconnect( ui->button_addState, SIGNAL(clicked()), this, SLOT(saveButtonAction_clicked()) );
     connect( ui->button_addState, SIGNAL(clicked()), this, SLOT(on_button_addState_clicked()) );
-}
-
-void ConfigWindow::activePushButton(QPushButton* stateButton, bool active) {
-    int r = stateButton->palette().background().color().red();
-    int g = stateButton->palette().background().color().green();
-    int b = stateButton->palette().background().color().blue();
-    if (active) {
-        if (r + g + b < FONT_COLOR_THRESHOLD) {
-            stateButton->setStyleSheet(QString("background-color: rgb( %1,%2,%3 ); color: rgb(255, 255, 255); border: 2px solid #ffffff").arg(r).arg(g).arg(b));
-        } else {
-            stateButton->setStyleSheet(QString("background-color: rgb( %1,%2,%3 ); border: 2px solid #000000").arg(r).arg(g).arg(b));
-        }
-    } else {
-        savePushButtonColor(stateButton, r, g, b);
-    }
 }
 
 void ConfigWindow::addStateToLayout(QPushButton* stateButton, int pozition) {
@@ -277,6 +287,9 @@ void ConfigWindow::repaintStatesLayout() {
 //###########################################
 
 void ConfigWindow::initLogicBookmark() {
+    activeStateLogicButton = -1; // stan wejsciowy - brak wybranego przycisku
+    activeTargetLogicButton = -1;
+
     layout_logic_states = new QVBoxLayout();
     layout_logic_states->setAlignment(Qt::AlignTop);
     ui->scrollArea_logic_states->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
@@ -286,60 +299,261 @@ void ConfigWindow::initLogicBookmark() {
     layout_logic_targets->setAlignment(Qt::AlignTop);
     ui->scrollArea_logic_targets->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
     ui->scrollArea_logic_targets->widget()->setLayout(layout_logic_targets);
+
+    layout_conditions = new QVBoxLayout();
+    layout_conditions->setAlignment(Qt::AlignTop);
+    ui->scrollArea_conditions->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+    ui->scrollArea_conditions->widget()->setLayout(layout_conditions);
 }
 
-// metoda wywolywana przez przycisk addState
-void ConfigWindow::addStateToLogic(QPushButton* stateButton) {
-    statesLogicList.push_back(stateButton);
-    layout_logic_states->addWidget(stateButton);
+// metoda wywolywana przez przycisk addState z zakladki states
+void ConfigWindow::addStateToLogic(State s) {
+    QPushButton* pb = createStateButton(s);
+    connect( pb, SIGNAL(clicked()), this, SLOT(stateLogicAction_clicked()) );
+    statesLogicList.push_back(pb);
+    layout_logic_states->addWidget(pb);
 }
 
-// metoda wywolywana przez przycisk remove state
+// metoda wywolywana przez przycisk remove state z zakladki states
 void ConfigWindow::removeStateFromLogic(int removedStateId) {
-    delete statesLogicList[removedStateId];
-    statesLogicList.erase(statesLogicList.begin()+removedStateId);
-    for (uint i = removedStateId; i < statesListInfo.size(); ++i) {
-        statesLogicList[i]->setText( QString("%1").arg(statesListInfo[i].id) );
+    removeStateButton(statesLogicList, removedStateId);
+    removeStateButton(targetsDialogList, removedStateId);
+    // usuwanie transitions'ow celujacych w usunietego state'a
+    for (uint i = 0; i < statesListInfo.size(); ++i) {
+        for (int j = statesListInfo[i].transitions.size() - 1; j >= 0; --j) {
+            if (statesListInfo[i].transitions[j].targetStateId == removedStateId) {
+                statesListInfo[i].transitions.erase(statesListInfo[i].transitions.begin() + j);
+            }
+        }
+    }
+    // dla aktywnego stanu w logic, usun button
+    for (uint i = 0; i < targetsList.size(); ++i) {
+        if (targetsList[i]->text() == QString("%1").arg(removedStateId)) {
+            delete targetsList[i];
+            targetsList.erase(targetsList.begin() + i);
+            --i;
+        }
+    }
+}
+
+void ConfigWindow::stateLogicAction_clicked() {
+    if (activeStateLogicButton != -1) {
+        activePushButton(statesLogicList[activeStateLogicButton], false);
+    }
+    if (activeTargetLogicButton != -1) {
+        activePushButton(targetsList[activeTargetLogicButton], false);
+        activeTargetLogicButton = -1;
+    }
+    clearConditions();
+    for (unsigned i = 0; i < statesLogicList.size(); i++) {
+        if ( statesLogicList[i] == sender() ) {
+            activeStateLogicButton = i;
+            activePushButton(statesLogicList[activeStateLogicButton], true);
+            //  wcszytanie transition: usuwanie starych przyciskow
+            foreach (QPushButton* pb, targetsList) {
+                delete pb;
+                targetsList.erase(targetsList.begin());
+            }
+            // dodawanei nowych
+            for (uint i = 0; i < ((State) statesListInfo[activeStateLogicButton]).transitions.size(); ++i) {
+                QPushButton* pb = createStateButton(statesListInfo[((State) statesListInfo[activeStateLogicButton]).transitions[i].targetStateId]);
+                connect( pb, SIGNAL(clicked()), this, SLOT(targetButtonAction_clicked()) );
+                layout_logic_targets->addWidget(pb);
+                targetsList.push_back(pb);
+            }
+            break;
+        }
     }
 }
 
 void ConfigWindow::on_button_addTarget_clicked()
 {
-    QDialog * d = new QDialog();
-  //  d->setGeometry(0,0,100,100);
-    QVBoxLayout* vl = new QVBoxLayout();
-    d->setLayout(vl);
-    foreach (State s, statesListInfo) {
-        QPushButton* pb = createStateButton(s);
-        connect( pb, SIGNAL(clicked()), this, SLOT(dialogTargetButtonAction_clicked()) );
-        targetsDialogList.push_back(pb);
-        vl->addWidget(pb);
+    if ( (activeStateLogicButton != -1) && (targetsDialogList.empty()) ){
+        QDialog * d = new QDialog();
+      //  d->setGeometry(0,0,100,100);
+        QVBoxLayout* vl = new QVBoxLayout();
+        d->setLayout(vl);
+        connect( d, SIGNAL(finished(int)), this, SLOT(deleteTargetDialogAction()));
+        foreach (State s, statesListInfo) {
+            QPushButton* pb = createStateButton(s);
+            connect( pb, SIGNAL(clicked()), this, SLOT(dialogTargetButtonAction_clicked()) );
+            targetsDialogList.push_back(pb);
+            vl->addWidget(pb);
+        }
+        d->show();
     }
-    d->show();
+}
+
+void ConfigWindow::deleteTargetDialogAction() {
+    for (int i = targetsDialogList.size(); i > 0; --i) {
+        delete targetsDialogList[0];
+        targetsDialogList.erase(targetsDialogList.begin());
+    }
 }
 
 void ConfigWindow::dialogTargetButtonAction_clicked() {
     foreach (QPushButton* pb, targetsDialogList) {
         if ( pb == sender() ) {
             QPushButton* newPb = createStateButton(statesListInfo[pb->text().toInt()]);
-            connect( pb, SIGNAL(clicked()), this, SLOT(targetButtonAction_clicked()) );
+            connect( newPb, SIGNAL(clicked()), this, SLOT(targetButtonAction_clicked()) );
             layout_logic_targets->addWidget(newPb);
             targetsList.push_back(newPb);
+            // dodanie transition do aktywnego state'a
+            Transition t;
+            t.targetStateId = pb->text().toInt();
+            statesListInfo[activeStateLogicButton].transitions.push_back(t);
             break;
         }
     }
 }
 
-void ConfigWindow::dialogButtonAction_clicked() {
-
+void ConfigWindow::targetButtonAction_clicked() {
+    if (activeTargetLogicButton != -1) {
+        activePushButton(targetsList[activeTargetLogicButton], false);
+    }
+    //clearConditions();
+    for (uint i = 0; i < targetsList.size(); ++i) {
+        if ( targetsList[i] == sender()  ) {
+                activePushButton(targetsList[i], true);
+                if ( (uint) activeTargetLogicButton != i ) {
+                    clearConditions();
+                }
+                activeTargetLogicButton = i;
+                layout_conditions->addLayout(createTransitionLayout());
+            }
+    }
+    // ta linijka powinna zapisywac transition
+    //statesListInfo[activeStateLogicButton].transitions[activeTargetLogicButton] = getTransition();
 }
 
 void ConfigWindow::on_button_removeTarget_clicked()
 {
-
+    if (activeTargetLogicButton != -1) {
+        clearConditions();
+        delete targetsList[activeTargetLogicButton];
+        targetsList.erase(targetsList.begin() + activeTargetLogicButton);
+        // usuwanie informacji o poszczegolnym warunku z listy stanow
+        statesListInfo[activeStateLogicButton].transitions.erase(statesListInfo[activeStateLogicButton].transitions.begin() + activeTargetLogicButton);
+        activeTargetLogicButton = -1;
+    }
 }
 
 void ConfigWindow::on_configTabs_currentChanged(int index)
 {
 
 }
+
+// tworzy operanda
+QHBoxLayout* ConfigWindow::createOperandLayout() {
+    QGridLayout* neighboursLayout = new QGridLayout();
+    for (int i = 0; i < 3; ++i) {
+        for (int j = 0; j < 3; ++j) {
+            QCheckBox* cb = new QCheckBox();
+            neighboursLayout->addWidget(cb, i, j);
+        }
+    }
+    neighboursLayout->setHorizontalSpacing(0);
+    neighboursLayout->setVerticalSpacing(0);
+
+    QSpinBox* additionalNeihbours = new QSpinBox();
+    additionalNeihbours->setMaximum(9);
+    neighboursLayout->addWidget(additionalNeihbours, 3, 0, 3, 3);
+
+    QComboBox* field = new QComboBox();
+    field->addItem("pole 1");
+    field->addItem("pole 2");
+
+    QComboBox* relation = new QComboBox();
+    relation->addItem("1-1");
+    relation->addItem("Suma");
+    relation->addItem("Srednia");
+
+    QHBoxLayout* operandLayout = new QHBoxLayout();
+    operandLayout->addLayout(neighboursLayout);
+    operandLayout->addWidget(field);
+    operandLayout->addWidget(relation);
+
+    return operandLayout;
+}
+
+// tworzy cale pola wyrazenia funkcji
+QHBoxLayout* ConfigWindow::createTransitionLayout() {
+
+    QHBoxLayout* transitionLayout = new QHBoxLayout();
+    transitionLayout->addLayout(createOperandLayout());
+
+    QComboBox* sign = new QComboBox();
+    sign->addItem("<");
+    sign->addItem(">");
+    //sign->setSizePolicy();
+    transitionLayout->addWidget(sign);
+
+    transitionLayout->addLayout(createOperandLayout());
+    transitionLayout->setAlignment(Qt::AlignTop);
+
+    return transitionLayout ;
+
+}
+
+// usuwa cala liste warunkow
+void ConfigWindow::clearConditions() {
+    QLayout* transitionLayout;
+    QLayoutItem* item;
+    while ((item  = layout_conditions->takeAt(0))) {
+        transitionLayout = item->layout();
+        // lewy
+        clearOperand( transitionLayout->takeAt(0)->layout() );
+        // sign
+        delete transitionLayout->takeAt(0)->widget();
+        // prawy
+        clearOperand( transitionLayout->takeAt(0)->layout() );
+    }
+}
+
+// usuwa layout operanda z potomkami
+void ConfigWindow::clearOperand(QLayout* operand) {
+    // sasiedzi
+    QLayout* gridLayout = operand->takeAt(0)->layout();
+    for (int i = 0; i < 10; ++i) {
+        delete gridLayout->takeAt(0)->widget();
+    }
+    delete gridLayout;
+    // field
+    delete operand->takeAt(0)->widget();
+    // relation
+    delete operand->takeAt(0)->widget();
+
+    delete operand;
+}
+
+Operand ConfigWindow::getOperand(QLayout* operandLayout) {
+    Operand o;
+    QLayout* gridLayout = operandLayout->takeAt(0)->layout();
+    for (uint i = 0; i < 9; ++i) {
+        o.neighbours[i / 3][i % 3] = ( (QCheckBox*) gridLayout->takeAt(i)->widget() )->isChecked();
+    }
+    o.additionalNeighbours = ( (QSpinBox*) gridLayout->takeAt(9)->widget() )->value();
+    o.field = ( (QComboBox*) operandLayout->takeAt(1)->widget() )->currentText().toStdString();
+    o.relation = ( (QComboBox*) operandLayout->takeAt(2)->widget() )->currentText().toStdString();
+    return o;
+}
+
+Transition ConfigWindow::getTransition() {
+    Transition t;
+    t.targetStateId = targetsList[activeTargetLogicButton]->text().toInt();
+    QLayout* transitionLayout;
+    QLayoutItem* item;
+    while ((item  = layout_conditions->takeAt(0))) {
+        transitionLayout = item->layout();
+        // lewy
+        Condition c;
+        c.leftOperand = getOperand( transitionLayout->takeAt(0)->layout() );
+        // sign
+        c.conditionSign = ( (QComboBox*) transitionLayout->takeAt(0)->widget() )->currentText().toStdString();
+        // prawy
+        c.rightOperand = getOperand( transitionLayout->takeAt(2)->layout() );
+        t.conditions.push_back(c);
+    }
+    return t;
+}
+
