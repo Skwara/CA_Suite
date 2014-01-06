@@ -10,7 +10,7 @@
 
 #include "state.h"
 #include "tools.h"
-#include "configwindow.h"
+#include "datamanager.h"
 
 #include <vector>
 
@@ -23,8 +23,10 @@ class Tab_States : public QWidget
     Q_OBJECT
 
 public:
-    explicit Tab_States(QWidget *parent = 0);
+    explicit Tab_States(DataManager* dm, QWidget *parent = 0);
     ~Tab_States();
+
+    void windowResized();
 
 private slots:
     void on_button_addProp_clicked();
@@ -39,6 +41,7 @@ private slots:
 
 private:
     Ui::Tab_States *ui;
+    DataManager* dataMan;
 
     QFormLayout* layout_fields;
     QVBoxLayout* layout_states;
@@ -48,14 +51,12 @@ private:
 
     int maxStatesLineNumber;
 
-    void initStatesBookmark();
     void setColorLabel(int r, int g, int b);
-    void addStateToLayout(QPushButton* stateButton, int pozition);
-    int getStatesLineNumber();
     State getCurrentState();
     void setDefaultState();
-    void resizeEvent(QResizeEvent* event);
+    int getStatesLineNumber();
     void repaintStatesLayout();
+    void addStateToLayout(QPushButton* stateButton, int position);
 };
 
 #endif // TAB_STATES_H

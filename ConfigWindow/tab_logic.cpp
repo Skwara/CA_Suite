@@ -1,21 +1,18 @@
 #include "tab_logic.h"
 #include "ui_tab_logic.h"
 
-Tab_Logic::Tab_Logic(QWidget *parent) :
+#include <iostream>
+
+#define DATAMAN dataMan
+
+Tab_Logic::Tab_Logic(DataManager* dm, QWidget *parent) :
     QWidget(parent),
     ui(new Ui::Tab_Logic)
 {
     ui->setupUi(this);
 
-    initLogicBookmark();
-}
+    dataMan = dm;
 
-Tab_Logic::~Tab_Logic()
-{
-    delete ui;
-}
-
-void Tab_Logic::initLogicBookmark() {
     activeStateLogicButton = -1; // stan wejsciowy - brak wybranego przycisku
     activeTargetLogicButton = -1;
 
@@ -35,6 +32,24 @@ void Tab_Logic::initLogicBookmark() {
     ui->scrollArea_conditions->widget()->setLayout(layout_conditions);
 }
 
+Tab_Logic::~Tab_Logic()
+{
+    delete ui;
+}
+
+//wywolywana przy kliknieciu na LogicTab
+void Tab_Logic::pageActivated() {
+    foreach (QPushButton* pb, statesLogicList) {
+        removeStateFromLogic(pb->text().toInt());
+    }
+    for (uint i = targetsList.size(); i > 0; --i) {
+        Tools::removeStateButton(targetsList, i-1);
+    }
+    foreach (State s, DATAMAN->statesListInfo) {
+        addStateToLogic(s);
+    }
+}
+
 // metoda wywolywana przez przycisk addState z zakladki states
 void Tab_Logic::addStateToLogic(State s) {
     QPushButton* pb = Tools::createStateButton(s);
@@ -48,13 +63,7 @@ void Tab_Logic::removeStateFromLogic(int removedStateId) {
     Tools::removeStateButton(statesLogicList, removedStateId);
     Tools::removeStateButton(targetsDialogList, removedStateId);
     // usuwanie transitions'ow celujacych w usunietego state'a
-    for (uint i = 0; i < ConfigWindow::statesListInfo.size(); ++i) {
-        for (int j = ConfigWindow::statesListInfo[i].transitions.size() - 1; j >= 0; --j) {
-            if (ConfigWindow::statesListInfo[i].transitions[j].targetStateId == removedStateId) {
-                ConfigWindow::statesListInfo[i].transitions.erase(ConfigWindow::statesListInfo[i].transitions.begin() + j);
-            }
-        }
-    }
+    DATAMAN->removeTransitionsToState(removedStateId);
     // dla aktywnego stanu w logic, usun button
     for (uint i = 0; i < targetsList.size(); ++i) {
         if (targetsList[i]->text() == QString("%1").arg(removedStateId)) {
@@ -84,8 +93,8 @@ void Tab_Logic::stateLogicAction_clicked() {
                 targetsList.erase(targetsList.begin());
             }
             // dodawanei nowych
-            for (uint i = 0; i < ((State) ConfigWindow::statesListInfo[activeStateLogicButton]).transitions.size(); ++i) {
-                QPushButton* pb = Tools::createStateButton(ConfigWindow::statesListInfo[((State) ConfigWindow::statesListInfo[activeStateLogicButton]).transitions[i].targetStateId]);
+            for (uint i = 0; i < ((State) DataManager::statesListInfo[activeStateLogicButton]).transitions.size(); ++i) {
+                QPushButton* pb = Tools::createStateButton(DataManager::statesListInfo[((State) DataManager::statesListInfo[activeStateLogicButton]).transitions[i].targetStateId]);
                 connect( pb, SIGNAL(clicked()), this, SLOT(targetButtonAction_clicked()) );
                 layout_logic_targets->addWidget(pb);
                 targetsList.push_back(pb);
@@ -95,22 +104,23 @@ void Tab_Logic::stateLogicAction_clicked() {
     }
 }
 
+//TODO JESLI NIE JEST ZAZNACZONY ZADEN STAN< PROGRAM SIE WYWALA
 void Tab_Logic::on_button_addTarget_clicked()
 {
-   // if ( (activeStateLogicButton != -1) && (targetsDialogList.empty()) ){
+    if ( (activeStateLogicButton != -1) && (targetsDialogList.empty()) ){
         QDialog * d = new QDialog();
       //  d->setGeometry(0,0,100,100);
         QVBoxLayout* vl = new QVBoxLayout();
         d->setLayout(vl);
         connect( d, SIGNAL(finished(int)), this, SLOT(deleteTargetDialogAction()));
-        foreach (State s, ConfigWindow::statesListInfo) {
+        foreach (State s, DataManager::statesListInfo) {
             QPushButton* pb = Tools::createStateButton(s);
             connect( pb, SIGNAL(clicked()), this, SLOT(dialogTargetButtonAction_clicked()) );
             targetsDialogList.push_back(pb);
             vl->addWidget(pb);
         }
         d->show();
-    //}
+    }
 }
 
 void Tab_Logic::deleteTargetDialogAction() {
@@ -123,14 +133,14 @@ void Tab_Logic::deleteTargetDialogAction() {
 void Tab_Logic::dialogTargetButtonAction_clicked() {
     foreach (QPushButton* pb, targetsDialogList) {
         if ( pb == sender() ) {
-            QPushButton* newPb = Tools::createStateButton(ConfigWindow::statesListInfo[pb->text().toInt()]);
+            QPushButton* newPb = Tools::createStateButton(DataManager::statesListInfo[pb->text().toInt()]);
             connect( newPb, SIGNAL(clicked()), this, SLOT(targetButtonAction_clicked()) );
             layout_logic_targets->addWidget(newPb);
             targetsList.push_back(newPb);
             // dodanie transition do aktywnego state'a
             Transition t;
             t.targetStateId = pb->text().toInt();
-            ConfigWindow::statesListInfo[activeStateLogicButton].transitions.push_back(t);
+            DataManager::statesListInfo[activeStateLogicButton].transitions.push_back(t);
             break;
         }
     }
@@ -152,7 +162,7 @@ void Tab_Logic::targetButtonAction_clicked() {
             }
     }
     // ta linijka powinna zapisywac transition
-    //ConfigWindow::statesListInfo[activeStateLogicButton].transitions[activeTargetLogicButton] = getTransition();
+    //GUIManager::statesListInfo[activeStateLogicButton].transitions[activeTargetLogicButton] = getTransition();
 }
 
 void Tab_Logic::on_button_removeTarget_clicked()
@@ -162,7 +172,7 @@ void Tab_Logic::on_button_removeTarget_clicked()
         delete targetsList[activeTargetLogicButton];
         targetsList.erase(targetsList.begin() + activeTargetLogicButton);
         // usuwanie informacji o poszczegolnym warunku z listy stanow
-        ConfigWindow::statesListInfo[activeStateLogicButton].transitions.erase(ConfigWindow::statesListInfo[activeStateLogicButton].transitions.begin() + activeTargetLogicButton);
+        DataManager::statesListInfo[activeStateLogicButton].transitions.erase(DataManager::statesListInfo[activeStateLogicButton].transitions.begin() + activeTargetLogicButton);
         activeTargetLogicButton = -1;
     }
 }

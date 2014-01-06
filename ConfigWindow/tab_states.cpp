@@ -4,22 +4,16 @@
 #include <iostream>
 
 #define STATE_SHAPE_SIZE 60
+#define DATAMAN dataMan
 
-Tab_States::Tab_States(QWidget *parent) :
+Tab_States::Tab_States(DataManager* dm, QWidget *parent) :
     QWidget(parent),
     ui(new Ui::Tab_States)
 {
     ui->setupUi(this);
 
-    initStatesBookmark();
-}
+    dataMan = dm;
 
-Tab_States::~Tab_States()
-{
-    delete ui;
-}
-
-void Tab_States::initStatesBookmark() {
     maxStatesLineNumber = getStatesLineNumber();
 
     // konfiguracja scrollArea'i dla dodatkowych pol komorek
@@ -37,51 +31,61 @@ void Tab_States::initStatesBookmark() {
     // ustawienie poczatkowego koloru
     setColorLabel(0, 0, 0);
     ui->spinBox_id->setReadOnly(true);
+
+    setDefaultState();
+}
+
+Tab_States::~Tab_States()
+{
+    delete ui;
 }
 
 void Tab_States::on_button_addProp_clicked()
 {
+    DATAMAN->addProperty();
+
     QLineEdit* name = new QLineEdit();
     QDoubleSpinBox* value = new QDoubleSpinBox();
     name->setFixedWidth(120);
     value->setFixedWidth(70);
     name->setPlaceholderText("name");
+
     fieldsList.push_back(std::pair<QLineEdit*, QDoubleSpinBox*>(name, value));
-
-    for (uint i = 0; i < ConfigWindow::statesListInfo.size(); ++i) {
-        ConfigWindow::statesListInfo[i].values.push_back(0);
-    }
-
     layout_fields->addRow(name, value);
 }
 
 void Tab_States::on_button_removeProp_clicked()
 {
     if (fieldsList.size() > 0) {
+        DATAMAN->removeProperty();
+
         delete fieldsList[fieldsList.size() - 1].first;
         delete fieldsList[fieldsList.size() - 1].second;
         fieldsList.pop_back();
-        for (unsigned i = 0; i < ConfigWindow::statesListInfo.size(); i++) {
-            if (!ConfigWindow::statesListInfo[i].values.empty()) {
-                ConfigWindow::statesListInfo[i].values.pop_back();
-            }
-        }
     }
+}
+
+void Tab_States::on_button_addState_clicked()
+{
+    State s = getCurrentState();
+    DATAMAN->addState(s);
+
+    QPushButton* stateButton = Tools::createStateButton(s);
+    addStateToLayout(stateButton, statesList.size());
+    connect(stateButton, SIGNAL(clicked()), this, SLOT(stateButtonAction_clicked()));
+    statesList.push_back(stateButton);
+    setDefaultState();
 }
 
 void Tab_States::on_button_removeState_clicked()
 {
     uint removedStateId = (uint)ui->spinBox_id->value();
-    if (ConfigWindow::statesListInfo.size() > 0) {
-        if ((uint)removedStateId < ConfigWindow::statesListInfo.size()) {
-            ConfigWindow::statesListInfo.erase(ConfigWindow::statesListInfo.begin()+removedStateId);
-            ui->spinBox_id->setValue(removedStateId - 1);
-            for (uint i = removedStateId; i < ConfigWindow::statesListInfo.size(); ++i) {
-                ConfigWindow::statesListInfo[i].id--;
-            }
-        }
-        Tools::removeStateButton(statesList, removedStateId);
-    }
+    ui->spinBox_id->setValue(removedStateId - 1);
+
+    DATAMAN->removeState(removedStateId);
+
+    Tools::removeStateButton(statesList, removedStateId);
+
     setDefaultState();
     if (ui->button_addState->text() != "Add State") {
         ui->button_addState->setText("Add State");
@@ -89,7 +93,7 @@ void Tab_States::on_button_removeState_clicked()
         connect( ui->button_addState, SIGNAL(clicked()), this, SLOT(on_button_addState_clicked()) );
     }
     repaintStatesLayout();
-    //Tools::removeStateFromLogic(removedStateId);
+    //removeStateFromLogic(removedStateId);
 }
 
 void Tab_States::on_slider_R_valueChanged(int value)
@@ -111,21 +115,6 @@ void Tab_States::setColorLabel(int r, int g, int b) {
     ui->color_label->setStyleSheet( QString("background-color: rgb( %1,%2,%3 )").arg(r).arg(g).arg(b) );
 }
 
-void Tab_States::on_button_addState_clicked()
-{
-    State s = getCurrentState();
-    QPushButton* stateButton = Tools::createStateButton(s);
-    connect( stateButton, SIGNAL(clicked()), this, SLOT(stateButtonAction_clicked()) );
-
-    //addStateToLogic(s);
-
-    addStateToLayout(stateButton, statesList.size());
-    statesList.push_back(stateButton);
-    ConfigWindow::statesListInfo.push_back(s);
-
-    setDefaultState();
-}
-
 void Tab_States::stateButtonAction_clicked() {
     for (unsigned i = 0; i < statesList.size(); i++) {
         // sprawdzenie, ktory przycisk zostal wcisniety
@@ -135,13 +124,13 @@ void Tab_States::stateButtonAction_clicked() {
                 Tools::activePushButton(statesList[ui->spinBox_id->value()], false);
             }
             // wczytanie wartosci z zapisanego juz stanu
-            ui->spinBox_id->setValue( ConfigWindow::statesListInfo[i].id);
-            ui->lineEdit_name->setText( ConfigWindow::statesListInfo[i].name.c_str());
-            ui->spinBox_B->setValue( ConfigWindow::statesListInfo[i].color.blue());
-            ui->spinBox_G->setValue( ConfigWindow::statesListInfo[i].color.green());
-            ui->spinBox_R->setValue( ConfigWindow::statesListInfo[i].color.red());
-            for (unsigned j = 0; j < ConfigWindow::statesListInfo[i].values.size(); j++) {
-                fieldsList[j].second->setValue( ConfigWindow::statesListInfo[i].values[j]);
+            ui->spinBox_id->setValue( DataManager::statesListInfo[i].id);
+            ui->lineEdit_name->setText( DataManager::statesListInfo[i].name.c_str());
+            ui->spinBox_B->setValue( DataManager::statesListInfo[i].color.blue());
+            ui->spinBox_G->setValue( DataManager::statesListInfo[i].color.green());
+            ui->spinBox_R->setValue( DataManager::statesListInfo[i].color.red());
+            for (unsigned j = 0; j < DataManager::statesListInfo[i].values.size(); j++) {
+                fieldsList[j].second->setValue( DataManager::statesListInfo[i].values[j]);
             }
             Tools::activePushButton((QPushButton*)sender(), true);
             break;
@@ -155,7 +144,7 @@ void Tab_States::stateButtonAction_clicked() {
 
 void Tab_States::saveButtonAction_clicked() {
     State s = getCurrentState();
-    ConfigWindow::statesListInfo[s.id] = s;
+    DataManager::statesListInfo[s.id] = s;
 
     QPushButton* pb = statesList[s.id];
     pb->setText(QString("%1").arg(s.id));
@@ -167,21 +156,6 @@ void Tab_States::saveButtonAction_clicked() {
     ui->button_addState->setText("Add State");
     disconnect( ui->button_addState, SIGNAL(clicked()), this, SLOT(saveButtonAction_clicked()) );
     connect( ui->button_addState, SIGNAL(clicked()), this, SLOT(on_button_addState_clicked()) );
-}
-
-void Tab_States::addStateToLayout(QPushButton* stateButton, int pozition) {
-    if ( pozition % maxStatesLineNumber == 0 ){
-          QHBoxLayout* hl = new QHBoxLayout();
-          layout_states->addLayout(hl);
-          hl->addWidget(stateButton);
-          hl->setAlignment(Qt::AlignLeft);
-      } else {
-          ( (QHBoxLayout*) layout_states->itemAt(pozition / maxStatesLineNumber) )->addWidget(stateButton);
-      }
-}
-
-int Tab_States::getStatesLineNumber() {
-    return ui->scrollArea_states->width() / (STATE_SHAPE_SIZE + 10);
 }
 
 // pobiera ustawienia aktualnie wyswietlanego stanu
@@ -197,8 +171,9 @@ State Tab_States::getCurrentState() {
 }
 
 void Tab_States::setDefaultState() {
-    ui->spinBox_id->setValue(ConfigWindow::statesListInfo.size());
+    ui->spinBox_id->setValue(DataManager::statesListInfo.size());
     ui->lineEdit_name->setText("");
+    ui->lineEdit_name->setPlaceholderText("name");
     ui->spinBox_B->setValue(0);
     ui->spinBox_G->setValue(0);
     ui->spinBox_R->setValue(0);
@@ -207,13 +182,16 @@ void Tab_States::setDefaultState() {
     }
 }
 
-void Tab_States::resizeEvent(QResizeEvent* event) {
-    std::cout << "Resized" << std::endl;
+void Tab_States::windowResized() {
     int newMaxStatesLineNumber = getStatesLineNumber();
     if ( newMaxStatesLineNumber != maxStatesLineNumber) {
         maxStatesLineNumber = newMaxStatesLineNumber;
         repaintStatesLayout();
     }
+}
+
+int Tab_States::getStatesLineNumber() {
+    return ui->scrollArea_states->width() / (STATE_SHAPE_SIZE + 6);
 }
 
 void Tab_States::repaintStatesLayout() {
@@ -223,5 +201,16 @@ void Tab_States::repaintStatesLayout() {
     }
     for (unsigned i = 0; i < statesList.size(); ++i) {
         addStateToLayout(statesList[i], i);
+    }
+}
+
+void Tab_States::addStateToLayout(QPushButton* stateButton, int position) {
+    if ( position % maxStatesLineNumber == 0 ){
+        QHBoxLayout* hl = new QHBoxLayout();
+        layout_states->addLayout(hl);
+        hl->addWidget(stateButton);
+        hl->setAlignment(Qt::AlignLeft);
+    } else {
+        ( (QHBoxLayout*) layout_states->itemAt(position / maxStatesLineNumber) )->addWidget(stateButton);
     }
 }

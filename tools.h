@@ -15,7 +15,7 @@ public:
     static QPushButton* createStateButton(State s);
     static void savePushButtonColor(QPushButton* pb, int r, int g, int b);
     static void activePushButton(QPushButton* stateButton, bool active);
-    static void removeStateButton(std::vector<QPushButton*>& buttonsList, int removedStateId);
+    static void removeStateButton(std::vector<QPushButton*>& buttonsList, uint removedStateId);
 };
 
 #endif // TOOLS_H

@@ -44,8 +44,8 @@ void Tools::activePushButton(QPushButton* stateButton, bool active) {
     }
 }
 // usuwa button z listy state'ow, przesuwa idki
-void Tools::removeStateButton(std::vector<QPushButton*>& buttonsList, int removedStateId) {
-    if ((uint) removedStateId < buttonsList.size()) {
+void Tools::removeStateButton(std::vector<QPushButton*>& buttonsList, uint removedStateId) {
+    if (removedStateId < buttonsList.size()) {
         delete buttonsList[removedStateId];
         buttonsList.erase(buttonsList.begin()+removedStateId);
         for (uint i = removedStateId; i < buttonsList.size(); ++i) {

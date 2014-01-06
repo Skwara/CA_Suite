@@ -5,12 +5,13 @@
 #include <QVBoxLayout>
 #include <QPushButton>
 #include <QCheckBox>
+#include <QComboBox>
 
-#include "configwindow.h"
 #include "transition.h"
 #include "operand.h"
 #include "state.h"
 #include "tools.h"
+#include "datamanager.h"
 
 namespace Ui {
 class Tab_Logic;
@@ -21,8 +22,10 @@ class Tab_Logic : public QWidget
     Q_OBJECT
 
 public:
-    explicit Tab_Logic(QWidget *parent = 0);
+    explicit Tab_Logic(DataManager* dm, QWidget *parent = 0);
     ~Tab_Logic();
+
+    void pageActivated();
 
 private slots:
     void stateLogicAction_clicked();
@@ -34,6 +37,7 @@ private slots:
 
 private:
     Ui::Tab_Logic *ui;
+    DataManager* dataMan;
 
     QVBoxLayout* layout_logic_states;
     QVBoxLayout* layout_logic_targets;
@@ -46,7 +50,6 @@ private:
     int activeStateLogicButton;
     int activeTargetLogicButton;
 
-    void initLogicBookmark();
     void addStateToLogic(State s);
     void removeStateFromLogic(int removedStateId);
     QHBoxLayout* createTransitionLayout();

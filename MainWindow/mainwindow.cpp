@@ -7,8 +7,8 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
-    configWindow = new ConfigWindow(this);
     ui->setupUi(this);
+    configWindow = new ConfigWindow(this);
 }
 
 MainWindow::~MainWindow()
