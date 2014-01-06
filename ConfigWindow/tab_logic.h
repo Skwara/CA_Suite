@@ -35,12 +35,16 @@ private slots:
     void targetButtonAction_clicked();
     void on_button_removeTarget_clicked();
 
+    void on_button_editTarget_clicked();
+
+    void on_button_addCondition_clicked();
+
 private:
     Ui::Tab_Logic *ui;
     DataManager* dataMan;
 
-    QVBoxLayout* layout_logic_states;
-    QVBoxLayout* layout_logic_targets;
+    QVBoxLayout* layout_states;
+    QVBoxLayout* layout_targets;
     QVBoxLayout* layout_conditions;
 
     std::vector<QPushButton*> statesLogicList;

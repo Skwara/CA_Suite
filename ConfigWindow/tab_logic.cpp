@@ -1,6 +1,8 @@
 #include "tab_logic.h"
 #include "ui_tab_logic.h"
 
+#include "conditionwidget.h"
+
 #include <iostream>
 
 #define DATAMAN dataMan
@@ -16,15 +18,15 @@ Tab_Logic::Tab_Logic(DataManager* dm, QWidget *parent) :
     activeStateLogicButton = -1; // stan wejsciowy - brak wybranego przycisku
     activeTargetLogicButton = -1;
 
-    layout_logic_states = new QVBoxLayout();
-    layout_logic_states->setAlignment(Qt::AlignTop);
-    ui->scrollArea_logic_states->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
-    ui->scrollArea_logic_states->widget()->setLayout(layout_logic_states);
+    layout_states = new QVBoxLayout();
+    layout_states->setAlignment(Qt::AlignTop);
+    ui->scrollArea_states->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+    ui->scrollArea_states->widget()->setLayout(layout_states);
 
-    layout_logic_targets = new QVBoxLayout();
-    layout_logic_targets->setAlignment(Qt::AlignTop);
-    ui->scrollArea_logic_targets->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
-    ui->scrollArea_logic_targets->widget()->setLayout(layout_logic_targets);
+    layout_targets = new QVBoxLayout();
+    layout_targets->setAlignment(Qt::AlignTop);
+    ui->scrollArea_targets->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+    ui->scrollArea_targets->widget()->setLayout(layout_targets);
 
     layout_conditions = new QVBoxLayout();
     layout_conditions->setAlignment(Qt::AlignTop);
@@ -55,7 +57,7 @@ void Tab_Logic::addStateToLogic(State s) {
     QPushButton* pb = Tools::createStateButton(s);
     connect( pb, SIGNAL(clicked()), this, SLOT(stateLogicAction_clicked()) );
     statesLogicList.push_back(pb);
-    layout_logic_states->addWidget(pb);
+    layout_states->addWidget(pb);
 }
 
 // metoda wywolywana przez przycisk remove state z zakladki states
@@ -96,7 +98,7 @@ void Tab_Logic::stateLogicAction_clicked() {
             for (uint i = 0; i < ((State) DataManager::statesListInfo[activeStateLogicButton]).transitions.size(); ++i) {
                 QPushButton* pb = Tools::createStateButton(DataManager::statesListInfo[((State) DataManager::statesListInfo[activeStateLogicButton]).transitions[i].targetStateId]);
                 connect( pb, SIGNAL(clicked()), this, SLOT(targetButtonAction_clicked()) );
-                layout_logic_targets->addWidget(pb);
+                layout_targets->addWidget(pb);
                 targetsList.push_back(pb);
             }
             break;
@@ -135,7 +137,7 @@ void Tab_Logic::dialogTargetButtonAction_clicked() {
         if ( pb == sender() ) {
             QPushButton* newPb = Tools::createStateButton(DataManager::statesListInfo[pb->text().toInt()]);
             connect( newPb, SIGNAL(clicked()), this, SLOT(targetButtonAction_clicked()) );
-            layout_logic_targets->addWidget(newPb);
+            layout_targets->addWidget(newPb);
             targetsList.push_back(newPb);
             // dodanie transition do aktywnego state'a
             Transition t;
@@ -162,7 +164,7 @@ void Tab_Logic::targetButtonAction_clicked() {
             }
     }
     // ta linijka powinna zapisywac transition
-    //GUIManager::statesListInfo[activeStateLogicButton].transitions[activeTargetLogicButton] = getTransition();
+    //DataManager::statesListInfo[activeStateLogicButton].transitions[activeTargetLogicButton] = getTransition();
 }
 
 void Tab_Logic::on_button_removeTarget_clicked()
@@ -289,4 +291,15 @@ Transition Tab_Logic::getTransition() {
         t.conditions.push_back(c);
     }
     return t;
+}
+
+void Tab_Logic::on_button_editTarget_clicked()
+{
+    //TODO przy kliknieciu drugi raz na target niech sie dzieje to samo
+}
+
+void Tab_Logic::on_button_addCondition_clicked()
+{
+    ConditionWidget* cw = new ConditionWidget();
+    layout_conditions->addWidget(cw);
 }
