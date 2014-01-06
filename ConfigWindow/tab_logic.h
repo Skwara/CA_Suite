@@ -12,6 +12,7 @@
 #include "state.h"
 #include "tools.h"
 #include "datamanager.h"
+#include "conditionwidget.h"
 
 namespace Ui {
 class Tab_Logic;
@@ -56,8 +57,6 @@ private:
 
     void addStateToLogic(State s);
     void removeStateFromLogic(int removedStateId);
-    QHBoxLayout* createTransitionLayout();
-    QHBoxLayout* createOperandLayout();
     void clearConditions();
     void clearOperand(QLayout* operand);
     Operand getOperand(QLayout* operandLayout);

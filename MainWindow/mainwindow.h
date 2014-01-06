@@ -2,8 +2,10 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QGridLayout>
 
 #include "configwindow.h"
+#include "cell.h"
 
 namespace Ui {
 class MainWindow;
@@ -23,6 +25,7 @@ private slots:
 private:
     Ui::MainWindow* ui;
     ConfigWindow* configWindow;
+    QGridLayout* layout_cells;
 };
 
 #endif // MAINWINDOW_H

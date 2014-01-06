@@ -64,25 +64,6 @@
         </item>
        </layout>
       </item>
-      <item row="2" column="2">
-       <widget class="QPushButton" name="GridMock">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>200</width>
-          <height>150</height>
-         </size>
-        </property>
-        <property name="text">
-         <string>GRID</string>
-        </property>
-       </widget>
-      </item>
       <item row="2" column="0">
        <layout class="QVBoxLayout" name="ControlsLayout">
         <property name="spacing">
@@ -260,6 +241,23 @@
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
+       </widget>
+      </item>
+      <item row="2" column="2">
+       <widget class="QScrollArea" name="scrollArea_cells">
+        <property name="widgetResizable">
+         <bool>true</bool>
+        </property>
+        <widget class="QWidget" name="scrollAreaWidgetContents">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>0</y>
+           <width>256</width>
+           <height>155</height>
+          </rect>
+         </property>
+        </widget>
        </widget>
       </item>
      </layout>

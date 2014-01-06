@@ -10,6 +10,8 @@ public:
     Cell( uint row, uint col, QWidget * parent = 0 );
     ~Cell(){}
 
+    void setColor(uint r, uint g, uint b);
+
 protected:
     void mousePressEvent( QMouseEvent * event );
 

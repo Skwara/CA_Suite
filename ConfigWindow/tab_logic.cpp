@@ -1,8 +1,6 @@
 #include "tab_logic.h"
 #include "ui_tab_logic.h"
 
-#include "conditionwidget.h"
-
 #include <iostream>
 
 #define DATAMAN dataMan
@@ -50,6 +48,47 @@ void Tab_Logic::pageActivated() {
     foreach (State s, DATAMAN->statesListInfo) {
         addStateToLogic(s);
     }
+}
+
+void Tab_Logic::on_button_addTarget_clicked()
+{
+    if ( (activeStateLogicButton != -1) && (targetsDialogList.empty()) ){
+        QDialog * d = new QDialog();
+      //  d->setGeometry(0,0,100,100);
+        QVBoxLayout* vl = new QVBoxLayout();
+        d->setLayout(vl);
+        connect( d, SIGNAL(finished(int)), this, SLOT(deleteTargetDialogAction()));
+        foreach (State s, DataManager::statesListInfo) {
+            QPushButton* pb = Tools::createStateButton(s);
+            connect( pb, SIGNAL(clicked()), this, SLOT(dialogTargetButtonAction_clicked()) );
+            targetsDialogList.push_back(pb);
+            vl->addWidget(pb);
+        }
+        d->show();
+    }
+}
+
+void Tab_Logic::on_button_removeTarget_clicked()
+{
+    if (activeTargetLogicButton != -1) {
+        clearConditions();
+        delete targetsList[activeTargetLogicButton];
+        targetsList.erase(targetsList.begin() + activeTargetLogicButton);
+        // usuwanie informacji o poszczegolnym warunku z listy stanow
+        DataManager::statesListInfo[activeStateLogicButton].transitions.erase(DataManager::statesListInfo[activeStateLogicButton].transitions.begin() + activeTargetLogicButton);
+        activeTargetLogicButton = -1;
+    }
+}
+
+void Tab_Logic::on_button_editTarget_clicked()
+{
+    //TODO przy kliknieciu drugi raz na target niech sie dzieje to samo
+}
+
+void Tab_Logic::on_button_addCondition_clicked()
+{
+    ConditionWidget* cw = new ConditionWidget();
+    layout_conditions->addWidget(cw);
 }
 
 // metoda wywolywana przez przycisk addState z zakladki states
@@ -106,32 +145,6 @@ void Tab_Logic::stateLogicAction_clicked() {
     }
 }
 
-//TODO JESLI NIE JEST ZAZNACZONY ZADEN STAN< PROGRAM SIE WYWALA
-void Tab_Logic::on_button_addTarget_clicked()
-{
-    if ( (activeStateLogicButton != -1) && (targetsDialogList.empty()) ){
-        QDialog * d = new QDialog();
-      //  d->setGeometry(0,0,100,100);
-        QVBoxLayout* vl = new QVBoxLayout();
-        d->setLayout(vl);
-        connect( d, SIGNAL(finished(int)), this, SLOT(deleteTargetDialogAction()));
-        foreach (State s, DataManager::statesListInfo) {
-            QPushButton* pb = Tools::createStateButton(s);
-            connect( pb, SIGNAL(clicked()), this, SLOT(dialogTargetButtonAction_clicked()) );
-            targetsDialogList.push_back(pb);
-            vl->addWidget(pb);
-        }
-        d->show();
-    }
-}
-
-void Tab_Logic::deleteTargetDialogAction() {
-    for (int i = targetsDialogList.size(); i > 0; --i) {
-        delete targetsDialogList[0];
-        targetsDialogList.erase(targetsDialogList.begin());
-    }
-}
-
 void Tab_Logic::dialogTargetButtonAction_clicked() {
     foreach (QPushButton* pb, targetsDialogList) {
         if ( pb == sender() ) {
@@ -152,97 +165,31 @@ void Tab_Logic::targetButtonAction_clicked() {
     if (activeTargetLogicButton != -1) {
         Tools::activePushButton(targetsList[activeTargetLogicButton], false);
     }
-    //clearConditions();
     for (uint i = 0; i < targetsList.size(); ++i) {
         if ( targetsList[i] == sender()  ) {
-                Tools::activePushButton(targetsList[i], true);
-                if ( (uint) activeTargetLogicButton != i ) {
-                    clearConditions();
-                }
-                activeTargetLogicButton = i;
-                layout_conditions->addLayout(createTransitionLayout());
+            Tools::activePushButton(targetsList[i], true);
+            if ( (uint) activeTargetLogicButton != i ) {
+                clearConditions();
             }
-    }
-    // ta linijka powinna zapisywac transition
-    //DataManager::statesListInfo[activeStateLogicButton].transitions[activeTargetLogicButton] = getTransition();
-}
-
-void Tab_Logic::on_button_removeTarget_clicked()
-{
-    if (activeTargetLogicButton != -1) {
-        clearConditions();
-        delete targetsList[activeTargetLogicButton];
-        targetsList.erase(targetsList.begin() + activeTargetLogicButton);
-        // usuwanie informacji o poszczegolnym warunku z listy stanow
-        DataManager::statesListInfo[activeStateLogicButton].transitions.erase(DataManager::statesListInfo[activeStateLogicButton].transitions.begin() + activeTargetLogicButton);
-        activeTargetLogicButton = -1;
-    }
-}
-
-// tworzy operanda
-QHBoxLayout* Tab_Logic::createOperandLayout() {
-    QGridLayout* neighboursLayout = new QGridLayout();
-    for (int i = 0; i < 3; ++i) {
-        for (int j = 0; j < 3; ++j) {
-            QCheckBox* cb = new QCheckBox();
-            neighboursLayout->addWidget(cb, i, j);
+            activeTargetLogicButton = i;
+            //layout_conditions->addWidget(new ConditionWidget());
+            break;
         }
     }
-    neighboursLayout->setHorizontalSpacing(0);
-    neighboursLayout->setVerticalSpacing(0);
-
-    QSpinBox* additionalNeihbours = new QSpinBox();
-    additionalNeihbours->setMaximum(9);
-    neighboursLayout->addWidget(additionalNeihbours, 3, 0, 3, 3);
-
-    QComboBox* field = new QComboBox();
-    field->addItem("pole 1");
-    field->addItem("pole 2");
-
-    QComboBox* relation = new QComboBox();
-    relation->addItem("1-1");
-    relation->addItem("Suma");
-    relation->addItem("Srednia");
-
-    QHBoxLayout* operandLayout = new QHBoxLayout();
-    operandLayout->addLayout(neighboursLayout);
-    operandLayout->addWidget(field);
-    operandLayout->addWidget(relation);
-
-    return operandLayout;
 }
 
-// tworzy cale pola wyrazenia funkcji
-QHBoxLayout* Tab_Logic::createTransitionLayout() {
-
-    QHBoxLayout* transitionLayout = new QHBoxLayout();
-    transitionLayout->addLayout(createOperandLayout());
-
-    QComboBox* sign = new QComboBox();
-    sign->addItem("<");
-    sign->addItem(">");
-    //sign->setSizePolicy();
-    transitionLayout->addWidget(sign);
-
-    transitionLayout->addLayout(createOperandLayout());
-    transitionLayout->setAlignment(Qt::AlignTop);
-
-    return transitionLayout ;
-
+void Tab_Logic::deleteTargetDialogAction() {
+    for (int i = targetsDialogList.size(); i > 0; --i) {
+        delete targetsDialogList[0];
+        targetsDialogList.erase(targetsDialogList.begin());
+    }
 }
 
 // usuwa cala liste warunkow
 void Tab_Logic::clearConditions() {
-    QLayout* transitionLayout;
     QLayoutItem* item;
-    while ((item  = layout_conditions->takeAt(0))) {
-        transitionLayout = item->layout();
-        // lewy
-        clearOperand( transitionLayout->takeAt(0)->layout() );
-        // sign
-        delete transitionLayout->takeAt(0)->widget();
-        // prawy
-        clearOperand( transitionLayout->takeAt(0)->layout() );
+    while ((item = layout_conditions->takeAt(0))) {
+        delete item->widget();
     }
 }
 
@@ -291,15 +238,4 @@ Transition Tab_Logic::getTransition() {
         t.conditions.push_back(c);
     }
     return t;
-}
-
-void Tab_Logic::on_button_editTarget_clicked()
-{
-    //TODO przy kliknieciu drugi raz na target niech sie dzieje to samo
-}
-
-void Tab_Logic::on_button_addCondition_clicked()
-{
-    ConditionWidget* cw = new ConditionWidget();
-    layout_conditions->addWidget(cw);
 }
