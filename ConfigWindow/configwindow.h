@@ -2,24 +2,7 @@
 #define CONFIGWINDOW_H
 
 #include <QDialog>
-#include <QLineEdit>
-#include <QDoubleSpinBox>
-#include <QFormLayout>
-#include <QGridLayout>
-#include <QApplication>
-#include <QSpinBox>
-#include <QComboBox>
-#include <QCheckBox>
 
-#include <vector>
-#include <utility>
-#include <iostream>
-
-#include "state.h"
-#include "transition.h"
-#include "operand.h"
-#include "condition.h"
-#include "tools.h"
 #include "datamanager.h"
 #include "tab_states.h"
 #include "tab_logic.h"

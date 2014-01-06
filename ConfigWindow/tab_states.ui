@@ -13,67 +13,11 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="1" rowspan="2">
-    <widget class="Line" name="line">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="2" rowspan="2">
-    <layout class="QVBoxLayout" name="verticalLayout">
-     <property name="spacing">
-      <number>4</number>
-     </property>
-     <item>
-      <widget class="QLabel" name="label_savedStates">
-       <property name="font">
-        <font>
-         <weight>75</weight>
-         <bold>true</bold>
-        </font>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">border: 1px solid #8f8f91</string>
-       </property>
-       <property name="text">
-        <string>Saved states</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignCenter</set>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QScrollArea" name="scrollArea_states">
-       <property name="verticalScrollBarPolicy">
-        <enum>Qt::ScrollBarAlwaysOn</enum>
-       </property>
-       <property name="widgetResizable">
-        <bool>true</bool>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-       </property>
-       <widget class="QWidget" name="scrollAreaWidgetContents_2">
-        <property name="geometry">
-         <rect>
-          <x>0</x>
-          <y>0</y>
-          <width>269</width>
-          <height>372</height>
-         </rect>
-        </property>
-       </widget>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item row="0" column="0" rowspan="2">
+  <layout class="QHBoxLayout" name="horizontalLayout">
+   <item>
     <layout class="QGridLayout" name="layout_newState">
      <property name="horizontalSpacing">
-      <number>6</number>
+      <number>-1</number>
      </property>
      <property name="verticalSpacing">
       <number>2</number>
@@ -185,7 +129,7 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>201</width>
+          <width>209</width>
           <height>189</height>
          </rect>
         </property>
@@ -235,7 +179,7 @@
        <property name="verticalSpacing">
         <number>0</number>
        </property>
-       <item row="1" column="1" colspan="2">
+       <item row="1" column="1" colspan="2" alignment="Qt::AlignHCenter">
         <widget class="QPushButton" name="button_addState">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -251,7 +195,7 @@
          </property>
          <property name="maximumSize">
           <size>
-           <width>1100</width>
+           <width>110</width>
            <height>32</height>
           </size>
          </property>
@@ -270,7 +214,7 @@
          </property>
          <property name="minimumSize">
           <size>
-           <width>11</width>
+           <width>110</width>
            <height>32</height>
           </size>
          </property>
@@ -288,7 +232,7 @@
          </property>
         </widget>
        </item>
-       <item row="0" column="1" alignment="Qt::AlignLeft">
+       <item row="0" column="1" alignment="Qt::AlignHCenter">
         <widget class="QPushButton" name="button_removeProp">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -298,13 +242,13 @@
          </property>
          <property name="minimumSize">
           <size>
-           <width>53</width>
+           <width>50</width>
            <height>32</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
-           <width>53</width>
+           <width>50</width>
            <height>32</height>
           </size>
          </property>
@@ -313,7 +257,7 @@
          </property>
         </widget>
        </item>
-       <item row="0" column="2" alignment="Qt::AlignRight">
+       <item row="0" column="2" alignment="Qt::AlignHCenter">
         <widget class="QPushButton" name="button_addProp">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -323,13 +267,13 @@
          </property>
          <property name="minimumSize">
           <size>
-           <width>53</width>
+           <width>50</width>
            <height>32</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
-           <width>53</width>
+           <width>50</width>
            <height>32</height>
           </size>
          </property>
@@ -453,6 +397,62 @@
        <property name="alignment">
         <set>Qt::AlignCenter</set>
        </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="Line" name="line">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <property name="spacing">
+      <number>4</number>
+     </property>
+     <item>
+      <widget class="QLabel" name="label_savedStates">
+       <property name="font">
+        <font>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">border: 1px solid #8f8f91</string>
+       </property>
+       <property name="text">
+        <string>Saved states</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QScrollArea" name="scrollArea_states">
+       <property name="verticalScrollBarPolicy">
+        <enum>Qt::ScrollBarAlwaysOn</enum>
+       </property>
+       <property name="widgetResizable">
+        <bool>true</bool>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+       </property>
+       <widget class="QWidget" name="scrollAreaWidgetContents_2">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>261</width>
+          <height>372</height>
+         </rect>
+        </property>
+       </widget>
       </widget>
      </item>
     </layout>
