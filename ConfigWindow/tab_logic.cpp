@@ -87,8 +87,10 @@ void Tab_Logic::on_button_editTarget_clicked()
 
 void Tab_Logic::on_button_addCondition_clicked()
 {
-    ConditionWidget* cw = new ConditionWidget();
-    layout_conditions->addWidget(cw);
+    if (activeTargetLogicButton != -1) {
+        ConditionWidget* cw = new ConditionWidget();
+        layout_conditions->addWidget(cw);
+    }
 }
 
 // metoda wywolywana przez przycisk addState z zakladki states
