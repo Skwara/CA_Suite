@@ -48,3 +48,13 @@ void DataManager::removeTransitionsToState(int id) {
         }
     }
 }
+
+void DataManager::saveData()
+{
+
+}
+
+void DataManager::loadData()
+{
+
+}

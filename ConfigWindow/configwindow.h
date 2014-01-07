@@ -6,6 +6,7 @@
 #include "datamanager.h"
 #include "tab_states.h"
 #include "tab_logic.h"
+#include "tab_general.h"
 
 namespace Ui {
 class ConfigWindow;
@@ -30,6 +31,7 @@ private:
 
     Tab_States* tab_states;
     Tab_Logic* tab_logic;
+    Tab_General* tab_general;
 
     void resizeEvent(QResizeEvent* event);
 };

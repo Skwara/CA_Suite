@@ -14,7 +14,7 @@ Tab_States::Tab_States(DataManager* dm, QWidget *parent) :
 
     dataMan = dm;
 
-    maxStatesLineNumber = getStatesLineNumber();
+    //maxStatesLineNumber = getStatesLineNumber();
 
     // konfiguracja scrollArea'i dla dodatkowych pol komorek
     layout_fields = new QFormLayout();
@@ -38,6 +38,11 @@ Tab_States::Tab_States(DataManager* dm, QWidget *parent) :
 Tab_States::~Tab_States()
 {
     delete ui;
+}
+
+void Tab_States::pageActivated()
+{
+    windowResized();
 }
 
 void Tab_States::on_button_addProp_clicked()

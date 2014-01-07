@@ -26,6 +26,7 @@ public:
     explicit Tab_States(DataManager* dm, QWidget *parent = 0);
     ~Tab_States();
 
+    void pageActivated();
     void windowResized();
 
 private slots:

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>815</width>
+    <width>600</width>
     <height>450</height>
    </rect>
   </property>
@@ -17,25 +17,12 @@
    <item row="0" column="0">
     <widget class="QTabWidget" name="configTabs">
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="generalTab">
       <attribute name="title">
        <string>General</string>
       </attribute>
-      <widget class="QPushButton" name="pushButton">
-       <property name="geometry">
-        <rect>
-         <x>150</x>
-         <y>100</y>
-         <width>114</width>
-         <height>32</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>PushButton</string>
-       </property>
-      </widget>
      </widget>
      <widget class="QWidget" name="statesTab">
       <attribute name="title">
