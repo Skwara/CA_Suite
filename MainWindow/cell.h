@@ -7,6 +7,11 @@ class Cell : public QLabel
 {
 Q_OBJECT
 public:
+    uint row, col;
+    uint stateId, nextStateId;
+    std::vector<double> values;
+    std::vector<double> nextValues;
+
     Cell( uint row, uint col, QWidget * parent = 0 );
     ~Cell(){}
 
@@ -16,7 +21,6 @@ protected:
     void mousePressEvent( QMouseEvent * event );
 
 private:
-    uint row, col;
 
     void clicked();
 };

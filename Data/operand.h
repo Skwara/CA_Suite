@@ -3,14 +3,20 @@
 
 #include <iostream>
 
+enum Relation {
+    oneToOne,
+    sum,
+    average
+};
+
 class Operand
 {
 public:
     Operand();
     bool neighbours[3][3];
     int additionalNeighbours;
-    std::string field;
-    std::string relation;
+    int field;
+    Relation relation;
     bool matchAll;
 };
 

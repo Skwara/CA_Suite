@@ -60,15 +60,15 @@ private slots:
 
     void on_spinBox_right_valueChanged(int arg1);
 
-    void on_comboBox_leftField_currentTextChanged(const QString &arg1);
+//    void on_comboBox_leftField_currentTextChanged(const QString &arg1);
 
-    void on_comboBox_rightField_currentTextChanged(const QString &arg1);
+//    void on_comboBox_rightField_currentTextChanged(const QString &arg1);
 
-    void on_comboBox_leftRelation_currentTextChanged(const QString &arg1);
+//    void on_comboBox_leftRelation_currentTextChanged(const QString &arg1);
 
-    void on_comboBox_rightRelation_currentTextChanged(const QString &arg1);
+//    void on_comboBox_rightRelation_currentTextChanged(const QString &arg1);
 
-    void on_comboBox_sign_currentTextChanged(const QString &arg1);
+//    void on_comboBox_sign_currentTextChanged(const QString &arg1);
 
     void on_radioButton_leftAll_clicked();
 

@@ -4,13 +4,21 @@
 #include <iostream>
 #include "operand.h"
 
+enum Sign {
+    greater,
+    greaterEqual,
+    equal,
+    lower,
+    lowerEqual
+};
+
 class Condition
 {
 public:
     Condition();
     Operand leftOperand;
     Operand rightOperand;
-    std::string conditionSign; //enum
+    Sign conditionSign; //enum
 };
 
 #endif // CONDITION_H

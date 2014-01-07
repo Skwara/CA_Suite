@@ -218,8 +218,8 @@ Operand Tab_Logic::getOperand(QLayout* operandLayout) {
         o.neighbours[i / 3][i % 3] = ( (QCheckBox*) gridLayout->takeAt(i)->widget() )->isChecked();
     }
     o.additionalNeighbours = ( (QSpinBox*) gridLayout->takeAt(9)->widget() )->value();
-    o.field = ( (QComboBox*) operandLayout->takeAt(1)->widget() )->currentText().toStdString();
-    o.relation = ( (QComboBox*) operandLayout->takeAt(2)->widget() )->currentText().toStdString();
+    o.field = ( (QComboBox*) operandLayout->takeAt(1)->widget() )->currentIndex();
+    o.relation = Relation (( (QComboBox*) operandLayout->takeAt(2)->widget() )->currentIndex());
     return o;
 }
 
@@ -234,7 +234,7 @@ Transition Tab_Logic::getTransition() {
         Condition c;
         c.leftOperand = getOperand( transitionLayout->takeAt(0)->layout() );
         // sign
-        c.conditionSign = ( (QComboBox*) transitionLayout->takeAt(0)->widget() )->currentText().toStdString();
+        c.conditionSign = Sign( ( (QComboBox*) transitionLayout->takeAt(0)->widget() )->currentIndex() );
         // prawy
         c.rightOperand = getOperand( transitionLayout->takeAt(2)->layout() );
         t.conditions.push_back(c);
