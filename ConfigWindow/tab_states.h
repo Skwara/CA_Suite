@@ -37,6 +37,7 @@ private slots:
     void on_slider_R_valueChanged(int value);
     void on_slider_G_valueChanged(int value);
     void on_slider_B_valueChanged(int value);
+    void on_textChanged(QString value);
     void stateButtonAction_clicked();
     void saveButtonAction_clicked();
 

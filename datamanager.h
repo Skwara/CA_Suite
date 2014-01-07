@@ -24,12 +24,13 @@ public:
     DataManager(Ui::ConfigWindow* ui);
 
     static std::vector<State> statesListInfo;
+    std::vector<std::string> names;
     Neighbourhood neighbourhood;
     uint boardWidth;
     uint boardHeight;
 
 
-    void addProperty();
+    void addProperty(std::string name);
     void removeProperty();
     void addState(State s);
     void removeState(uint id);

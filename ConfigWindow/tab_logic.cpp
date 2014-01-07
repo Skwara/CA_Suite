@@ -88,7 +88,7 @@ void Tab_Logic::on_button_editTarget_clicked()
 void Tab_Logic::on_button_addCondition_clicked()
 {
     if (activeTargetLogicButton != -1) {
-        ConditionWidget* cw = new ConditionWidget();
+        ConditionWidget* cw = new ConditionWidget(DATAMAN, &(DATAMAN->statesListInfo[activeStateLogicButton]), activeTargetLogicButton);
         layout_conditions->addWidget(cw);
     }
 }

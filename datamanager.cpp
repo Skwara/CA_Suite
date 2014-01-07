@@ -7,10 +7,11 @@ DataManager::DataManager(Ui::ConfigWindow* ui)
     this->ui = ui;
 }
 
-void DataManager::addProperty()
+void DataManager::addProperty(std::string name)
 {
     //dla kazdego stanu dodaj wartosc 0
     for (uint i = 0; i < statesListInfo.size(); ++i) {
+        names.push_back(name);
         statesListInfo[i].values.push_back(0);
     }
 }
@@ -19,6 +20,7 @@ void DataManager::removeProperty()
 {
     for (unsigned i = 0; i < statesListInfo.size(); i++) {
         if (!statesListInfo[i].values.empty()) { //TODO niekoniecznie potrzebny if, jesli fieldsList i statesListInfo dzialaja rownolegle
+            names.pop_back();
             statesListInfo[i].values.pop_back();
         }
     }

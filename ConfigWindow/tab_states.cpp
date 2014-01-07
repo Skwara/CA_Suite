@@ -47,13 +47,14 @@ void Tab_States::pageActivated()
 
 void Tab_States::on_button_addProp_clicked()
 {
-    DATAMAN->addProperty();
-
     QLineEdit* name = new QLineEdit();
     QDoubleSpinBox* value = new QDoubleSpinBox();
+    connect(name, SIGNAL(textChanged(QString)), this, SLOT(on_textChanged(QString)));
     name->setFixedWidth(120);
     value->setFixedWidth(70);
-    name->setPlaceholderText("name");
+    name->setPlaceholderText(QString("name%1").arg(fieldsList.size()));
+
+    DATAMAN->addProperty(name->placeholderText().toStdString());
 
     fieldsList.push_back(std::pair<QLineEdit*, QDoubleSpinBox*>(name, value));
     layout_fields->addRow(name, value);
@@ -114,6 +115,18 @@ void Tab_States::on_slider_G_valueChanged(int value)
 void Tab_States::on_slider_B_valueChanged(int value)
 {
     setColorLabel(ui->slider_R->value(), ui->slider_G->value(), value );
+}
+
+void Tab_States::on_textChanged(QString value)
+{
+    //TODO dopisac zmiane nazw w conditionWidget comboBox
+    std::string senderName = ((QLineEdit*)sender())->placeholderText().toStdString();
+    ((QLineEdit*)sender())->setPlaceholderText(value);
+    for (uint i = 0; i < DATAMAN->names.size(); ++i) {
+        if (senderName == DATAMAN->names[i]) {
+            DATAMAN->names[i] = value.toStdString();
+        }
+    }
 }
 
 void Tab_States::setColorLabel(int r, int g, int b) {
