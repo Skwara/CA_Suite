@@ -47,42 +47,99 @@ bool Engine::transition(const Transition& transition, const Cell &cell) {
 
 // sprawdza wszystki mozliwe kombinacje warunkow, zalezne od ilosci dobieranych sasiadow (additionalNeighbours)
 bool Engine::checkCombinationsOfConditions(const Cell &cell, const Condition &condition) {
-    // TODO
-    // z teog nizej bd funkcja, bo bd to samo dla lewego i prawego
+    // tworzenie kopii sasiadow, do pozniejszej edycji
     bool leftNeighbours[3][3];
-//    leftNeighbours = condition.leftOperand.neighbours; // to robi kopie, nie?
-    //bool rightNeighbours = condition.rightOperand.neighbours;
+    for (int i = 0; i < 3; ++i) {
+        for (int j = 0; j < 3; ++j) {
+            leftNeighbours[i][j] = condition.leftOperand.neighbours[i][j]; // TODO WTF, czemu nei moge po prostu zwrocic?
+        }
+    }
+    std::vector<bool*> possibleLeftNeighbours =
+            getPossibleNeighboursVector( leftNeighbours, condition.leftOperand.additionalNeighbours);
 
-    std::vector<bool*> additionalNeighbours;
+    // petla po mozliwych lewych przypadkach
+    while (nextCombination(possibleLeftNeighbours)) {
+        // przygotowanie kopii prawych sasiadow, do pozneijszej edycji
+        bool rightNeighbours[3][3];
+        for (int i = 0; i < 3; ++i) {
+            for (int j = 0; j < 3; ++j) {
+                rightNeighbours[i][j] = condition.rightOperand.neighbours[i][j];
+            }
+        }
+        std::vector<bool*> possibleRightNeighbours =
+                getPossibleNeighboursVector( rightNeighbours, condition.rightOperand.additionalNeighbours);
+
+        // petla po mozliwych prawych przypadkach
+        while (nextCombination(possibleRightNeighbours)) {
+            if (checkCondition(nextValues(leftNeighbours, condition.leftOperand.field, cell), condition.leftOperand.relation,
+                               nextValues(rightNeighbours, condition.rightOperand.field, cell), condition.rightOperand.relation, condition.conditionSign)) {
+                return true;
+            }
+        // TODO TU ROBIE WETWT$#T#T$#T
+
+        }
+    }
+
+
+
+    return false;
+}
+
+std::vector<bool*> Engine::getPossibleNeighboursVector(bool neighbours[3][3], int additionalNeighbours) {
+    std::vector<bool*> possibleNeighbours;
     // tworzenie listy mozliwych do wyboru sasiadow
     for (int i = 0; i < 2; ++i) {
         for (int j = 0; j < 2; ++j) {
-            if (!leftNeighbours[i][j]) {
-                additionalNeighbours.push_back(&leftNeighbours[i][j]);
+            if (neighbours[i][j]) {
+                possibleNeighbours.push_back(&neighbours[i][j]);
             }
         }
     }
     // ustawianie stanu poczatkowego listy
-    for (int i = 0; i < condition.leftOperand.additionalNeighbours; ++i) {
-        *additionalNeighbours[i] = true;
+    for (int i = 0; i < additionalNeighbours; ++i) { // nie moze byc ich wiecej niz w sumie sasiadow
+        *(possibleNeighbours[i]) = true;
     }
-  //  nextCombination();
- //   nextValues();
-    return true;
+    return possibleNeighbours;
 }
 
 // zwraca nastepna kombinacje wartosci
-void Engine::nextCombination(bool* additionalNeighbours, int additionalNeighboursLength) {
-
+// DZIALA!@#!#!@!# jak cos
+bool Engine::nextCombination(std::vector<bool*> additionalNeighbours) {
+    bool isLast = false;
+    // jesli ostatni = 1, przygotuj sie na jego przesuniecie
+    if (*additionalNeighbours[additionalNeighbours.size() - 1]) {
+        isLast = true;
+    }
+    for (int i = additionalNeighbours.size() - 2; i >= 0; --i) {
+        // jesli znajdzie pierwszy od lewej = 1
+        if (*additionalNeighbours[i]) {
+            // zmien go na 0
+            *additionalNeighbours[i] = false;
+            // jesli nastepny nie jest 1
+            if (!(*additionalNeighbours[i + 1])) {
+                // ustaw go = 1
+                *(additionalNeighbours[(i + 1)]) = true;
+                // ustaw ostatni obok pierwszego
+                if ( isLast ) {
+                    *additionalNeighbours[additionalNeighbours.size() - 1] = false;
+                    *(additionalNeighbours[i + 2]) = true;
+                }
+            } else {
+                // jesli nastepny jest = 1, to zakoncz
+                return false;
+            }
+            return true;
+        }
+    }
 }
 
 // na podstawie sasiadow tworzy liste ich wartosci
 std::vector<double> Engine::nextValues(bool neighbours[3][3], int field, const Cell &cell) {
     std::vector<double> vector;
-    for (int i = 0; i < 2; ++i) {
-        for (int j = 0; j < 2; ++j) {
-            if (neighbours) {
-                vector.push_back(cell.values[field]); //TODO blad
+    for (int i = 0; i < 3; ++i) {
+        for (int j = 0; j < 3; ++j) {
+            if (neighbours[i][j]) {
+                vector.push_back(cell.neighbours[i*3 + j]->values[field]);
             }
         }
     }
@@ -110,7 +167,7 @@ bool Engine::checkCondition(const std::vector<double> &leftValues, Relation left
     case lowerEqual:
         foreach (double leftValue, leftValuesVector) {
             foreach (double rightValue, rightValuesVector) {
-                if (! leftValue <= rightValue ){
+                if (! (leftValue <= rightValue) ){
                     return false;
                 }
             }
@@ -119,7 +176,7 @@ bool Engine::checkCondition(const std::vector<double> &leftValues, Relation left
     case equal:
         foreach (double leftValue, leftValuesVector) {
             foreach (double rightValue, rightValuesVector) {
-                if (! leftValue == rightValue ){
+                if (! (leftValue == rightValue) ){
                     return false;
                 }
             }
@@ -128,7 +185,7 @@ bool Engine::checkCondition(const std::vector<double> &leftValues, Relation left
     case greater:
         foreach (double leftValue, leftValuesVector) {
             foreach (double rightValue, rightValuesVector) {
-                if (! leftValue > rightValue ){
+                if (! (leftValue > rightValue) ){
                     return false;
                 }
             }
@@ -137,7 +194,7 @@ bool Engine::checkCondition(const std::vector<double> &leftValues, Relation left
     case greaterEqual:
         foreach (double leftValue, leftValuesVector) {
             foreach (double rightValue, rightValuesVector) {
-                if (! leftValue >= rightValue ){
+                if (! (leftValue >= rightValue) ){
                     return false;
                 }
             }

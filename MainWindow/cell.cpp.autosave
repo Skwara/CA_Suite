@@ -9,8 +9,6 @@ Cell::Cell(uint row, uint col, QWidget * parent ) :
     setMinimumWidth(20);
     setMaximumHeight(20);
     setMaximumWidth(20);
-    //setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum); // nie dziala
-    setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 }
 
 void Cell::setColor(uint r, uint g, uint b)

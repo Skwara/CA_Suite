@@ -11,6 +11,7 @@ public:
     uint stateId, nextStateId;
     std::vector<double> values;
     std::vector<double> nextValues;
+    std::vector<Cell*> neighbours;
 
     Cell( uint row, uint col, QWidget * parent = 0 );
     ~Cell(){}

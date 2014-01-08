@@ -35,7 +35,7 @@
          <number>0</number>
         </property>
         <property name="horizontalSpacing">
-         <number>-1</number>
+         <number>6</number>
         </property>
         <item row="0" column="0" alignment="Qt::AlignHCenter">
          <widget class="QPushButton" name="configButton">
@@ -253,8 +253,8 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>256</width>
-           <height>155</height>
+           <width>269</width>
+           <height>160</height>
           </rect>
          </property>
         </widget>
@@ -270,7 +270,7 @@
      <x>0</x>
      <y>0</y>
      <width>400</width>
-     <height>22</height>
+     <height>20</height>
     </rect>
    </property>
   </widget>

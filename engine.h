@@ -14,13 +14,14 @@ public:
     Engine();
     Engine(DataManager* dm);
 
-private:
+//private:
     DataManager* dataMan;
 
     void prepareNextState(Cell& cell);
     bool transition(const Transition &transition, const Cell &cell);
     bool checkCombinationsOfConditions(const Cell &cell, const Condition &condition);
-    void nextCombination(bool* additionalNeighbours,int additionalNeighboursLength);
+    std::vector<bool*> getPossibleNeighboursVector(bool neighbours[3][3], int additionalNeighbours);
+    bool nextCombination(std::vector<bool*> additionalNeighbours);
     std::vector<double> nextValues(bool neighbours[3][3], int field, const Cell &cell);
     bool checkCondition(const std::vector<double> &leftValues, Relation leftRelation,
                                 const std::vector<double> &rightValues, Relation rightRelation, Sign sign);
