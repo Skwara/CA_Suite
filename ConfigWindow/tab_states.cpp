@@ -147,8 +147,9 @@ void Tab_States::stateButtonAction_clicked() {
             ui->spinBox_B->setValue( DataManager::statesListInfo[i].color.blue());
             ui->spinBox_G->setValue( DataManager::statesListInfo[i].color.green());
             ui->spinBox_R->setValue( DataManager::statesListInfo[i].color.red());
-            for (unsigned j = 0; j < DataManager::statesListInfo[i].values.size(); j++) {
-                fieldsList[j].second->setValue( DataManager::statesListInfo[i].values[j]);
+            //przesuniecie bo pierwszym elementem jest id stanu
+            for (unsigned j = 1; j < DataManager::statesListInfo[i].values.size(); ++j) {
+                fieldsList[j - 1].second->setValue( DataManager::statesListInfo[i].values[j]);
             }
             Tools::activePushButton((QPushButton*)sender(), true);
             break;
@@ -182,6 +183,7 @@ State Tab_States::getCurrentState() {
     s.id = ui->spinBox_id->value();
     s.name = ui->lineEdit_name->text().toStdString();
     s.color = QColor(ui->spinBox_R->value(), ui->spinBox_G->value(), ui->spinBox_B->value());
+    s.values.push_back(s.id);
     for (unsigned i = 0; i < fieldsList.size(); i++ ) {
         s.values.push_back( fieldsList[i].second->value());
     }

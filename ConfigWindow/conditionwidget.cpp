@@ -35,6 +35,8 @@ ConditionWidget::ConditionWidget(DataManager* dm, State* state, uint transitionN
     }
     state->transitions[transitionNumber].conditions.push_back(condition);
 
+    ui->comboBox_leftField->addItem(QString("State ID"));
+    ui->comboBox_rightField->addItem(QString("State ID"));
     for (uint i = 0; i < DATAMAN->names.size(); ++i) {
         ui->comboBox_leftField->addItem(QString(DATAMAN->names[i].c_str()));
         ui->comboBox_rightField->addItem(QString(DATAMAN->names[i].c_str()));

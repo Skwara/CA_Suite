@@ -14,7 +14,7 @@
    <string>Dialog</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="0">
+   <item row="1" column="0">
     <widget class="QScrollArea" name="scrollArea">
      <property name="widgetResizable">
       <bool>true</bool>
@@ -25,10 +25,17 @@
         <x>0</x>
         <y>0</y>
         <width>274</width>
-        <height>374</height>
+        <height>351</height>
        </rect>
       </property>
      </widget>
+    </widget>
+   </item>
+   <item row="0" column="0">
+    <widget class="QCheckBox" name="checkBox">
+     <property name="text">
+      <string>Modify current state values by:</string>
+     </property>
     </widget>
    </item>
   </layout>
