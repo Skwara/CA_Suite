@@ -6,6 +6,7 @@
 #include "state.h"
 #include "transition.h"
 #include "datamanager.h"
+#include "tab_logic.h"
 
 namespace Ui {
 class ConditionWidget;
@@ -16,8 +17,12 @@ class ConditionWidget : public QWidget
     Q_OBJECT
 
 public:
-    explicit ConditionWidget(DataManager* dm, State* state, uint transitionNumber, QWidget *parent = 0);
+    explicit ConditionWidget(DataManager* dm, State* state, uint transitionNumber, QWidget *parent);
     ~ConditionWidget();
+
+    uint getStateNumber();
+    uint getTransitionNumber();
+    uint getConditionNumber();
 
 private slots:
     void on_checkBox_clicked();
@@ -60,15 +65,15 @@ private slots:
 
     void on_spinBox_right_valueChanged(int arg1);
 
-//    void on_comboBox_leftField_currentTextChanged(const QString &arg1);
+    void on_comboBox_leftField_currentIndexChanged(int index);
 
-//    void on_comboBox_rightField_currentTextChanged(const QString &arg1);
+    void on_comboBox_rightField_currentIndexChanged(int index);
 
-//    void on_comboBox_leftRelation_currentTextChanged(const QString &arg1);
+    void on_comboBox_leftRelation_currentIndexChanged(int index);
 
-//    void on_comboBox_rightRelation_currentTextChanged(const QString &arg1);
+    void on_comboBox_rightRelation_currentIndexChanged(int index);
 
-//    void on_comboBox_sign_currentTextChanged(const QString &arg1);
+    void on_comboBox_sign_currentIndexChanged(int index);
 
     void on_radioButton_leftAll_clicked();
 
@@ -77,8 +82,6 @@ private slots:
     void on_radioButton_rightAll_clicked();
 
     void on_radioButton_rightAny_clicked();
-
-    void on_button_removeCondition_clicked();
 
 private:
     Ui::ConditionWidget *ui;

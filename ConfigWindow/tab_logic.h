@@ -39,6 +39,7 @@ private slots:
     void on_button_editTarget_clicked();
 
     void on_button_addCondition_clicked();
+    void button_removeCondition_clicked();
 
 private:
     Ui::Tab_Logic *ui;

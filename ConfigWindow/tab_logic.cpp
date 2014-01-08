@@ -88,9 +88,16 @@ void Tab_Logic::on_button_editTarget_clicked()
 void Tab_Logic::on_button_addCondition_clicked()
 {
     if (activeTargetLogicButton != -1) {
-        ConditionWidget* cw = new ConditionWidget(DATAMAN, &(DATAMAN->statesListInfo[activeStateLogicButton]), activeTargetLogicButton);
+        ConditionWidget* cw = new ConditionWidget(DATAMAN, &(DATAMAN->statesListInfo[activeStateLogicButton]), activeTargetLogicButton, this);
         layout_conditions->addWidget(cw);
     }
+}
+
+void Tab_Logic::button_removeCondition_clicked()
+{
+    ConditionWidget* widget = (ConditionWidget*)sender()->parent();
+    DATAMAN->removeCondition(widget->getStateNumber(), widget->getTransitionNumber(), widget->getConditionNumber());
+    delete layout_conditions->takeAt(widget->getConditionNumber())->widget();
 }
 
 // metoda wywolywana przez przycisk addState z zakladki states

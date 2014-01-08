@@ -34,6 +34,8 @@ public:
     void removeProperty();
     void addState(State s);
     void removeState(uint id);
+    void addCondition();
+    void removeCondition(uint stateNr, uint transitionNr, uint conditionNr);
 
     void removeTransitionsToState(int id);
 

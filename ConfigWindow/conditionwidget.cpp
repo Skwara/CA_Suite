@@ -12,6 +12,8 @@ ConditionWidget::ConditionWidget(DataManager* dm, State* state, uint transitionN
 
     dataMan = dm;
 
+    connect(ui->button_removeCondition, SIGNAL(clicked()), (Tab_Logic*)parent, SLOT(button_removeCondition_clicked()));
+
     for (uint i = 0; i < DATAMAN->names.size(); ++i) {
         ui->comboBox_leftField->addItem(QString(DATAMAN->names[i].c_str()));
         ui->comboBox_rightField->addItem(QString(DATAMAN->names[i].c_str()));
@@ -42,6 +44,21 @@ ConditionWidget::ConditionWidget(DataManager* dm, State* state, uint transitionN
 ConditionWidget::~ConditionWidget()
 {
     delete ui;
+}
+
+uint ConditionWidget::getStateNumber()
+{
+    return state->id;
+}
+
+uint ConditionWidget::getTransitionNumber()
+{
+    return transitionNumber;
+}
+
+uint ConditionWidget::getConditionNumber()
+{
+    return conditionNumber;
 }
 
 void ConditionWidget::setLeftNeighbour(QObject* sender, uint row, uint col)
@@ -162,30 +179,30 @@ void ConditionWidget::on_spinBox_right_valueChanged(int arg1)
     THISCONDITION->rightOperand.additionalNeighbours = arg1;
 }
 
-//void ConditionWidget::on_comboBox_leftField_currentTextChanged(const QString &arg1)
-//{
-//    THISCONDITION->leftOperand.field = arg1.toStdString();
-//}
+void ConditionWidget::on_comboBox_leftField_currentIndexChanged(int index)
+{
+    THISCONDITION->leftOperand.field = index;
+}
 
-//void ConditionWidget::on_comboBox_rightField_currentTextChanged(const QString &arg1)
-//{
-//    THISCONDITION->rightOperand.field = arg1.toStdString();
-//}
+void ConditionWidget::on_comboBox_rightField_currentIndexChanged(int index)
+{
+    THISCONDITION->rightOperand.field = index;
+}
 
-//void ConditionWidget::on_comboBox_leftRelation_currentTextChanged(const QString &arg1)
-//{
-//    THISCONDITION->leftOperand.relation = arg1.toStdString();
-//}
+void ConditionWidget::on_comboBox_leftRelation_currentIndexChanged(int index)
+{
+    THISCONDITION->leftOperand.relation = (Relation)index;
+}
 
-//void ConditionWidget::on_comboBox_rightRelation_currentTextChanged(const QString &arg1)
-//{
-//    THISCONDITION->rightOperand.relation = arg1.toStdString();
-//}
+void ConditionWidget::on_comboBox_rightRelation_currentIndexChanged(int index)
+{
+    THISCONDITION->rightOperand.relation = (Relation)index;
+}
 
-//void ConditionWidget::on_comboBox_sign_currentTextChanged(const QString &arg1)
-//{
-//    THISCONDITION->conditionSign = arg1.toStdString();
-//}
+void ConditionWidget::on_comboBox_sign_currentIndexChanged(int index)
+{
+    THISCONDITION->conditionSign = (Sign)index;
+}
 
 void ConditionWidget::on_radioButton_leftAll_clicked()
 {
@@ -205,9 +222,4 @@ void ConditionWidget::on_radioButton_rightAll_clicked()
 void ConditionWidget::on_radioButton_rightAny_clicked()
 {
     THISCONDITION->rightOperand.matchAll = !((QRadioButton*)sender())->isChecked();
-}
-
-void ConditionWidget::on_button_removeCondition_clicked()
-{
-    //TODO usuwanie condition
 }

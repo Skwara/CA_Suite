@@ -41,6 +41,17 @@ void DataManager::removeState(uint id)
     }
 }
 
+void DataManager::addCondition()
+{
+
+}
+
+void DataManager::removeCondition(uint stateNr, uint transitionNr, uint conditionNr)
+{
+    std::vector<Condition>* conditionsPtr = (std::vector<Condition>*)&(statesListInfo[stateNr].transitions[transitionNr].conditions);
+    conditionsPtr->erase(conditionsPtr->begin() + conditionNr);
+}
+
 void DataManager::removeTransitionsToState(int id) {
     for (uint i = 0; i < statesListInfo.size(); ++i) {
         for (int j = statesListInfo[i].transitions.size() - 1; j >= 0; --j) {
