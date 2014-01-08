@@ -17,7 +17,7 @@ public:
 private:
     DataManager* dataMan;
 
-    void prepareNextState(Cell* cell);
+    void prepareNextState(Cell& cell);
     bool transition(const Transition &transition, const Cell &cell);
     bool checkCombinationsOfConditions(const Cell &cell, const Condition &condition);
     void nextCombination(bool* additionalNeighbours,int additionalNeighboursLength);
@@ -25,7 +25,7 @@ private:
     bool checkCondition(const std::vector<double> &leftValues, Relation leftRelation,
                                 const std::vector<double> &rightValues, Relation rightRelation, Sign sign);
     std::vector<double> calculateValues(const std::vector<double> &values, Relation relation);
-    void prepareNextValues(Cell* cell, const Transition &transition);
+    void prepareNextValues(Cell& cell, const Transition &transition);
 };
 
 #endif // ENGINE_H

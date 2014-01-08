@@ -10,10 +10,10 @@ Engine::Engine(DataManager *dm)
 }
 
 // przygotowywuje przyszly stan
-void Engine::prepareNextState(Cell *cell) {
-    foreach (Transition tran, dataMan->statesListInfo[cell->stateId].transitions) {
-        if ( transition(tran, *cell) ) { // nie daje lgowy ze przez *
-            cell->nextStateId = tran.targetStateId;
+void Engine::prepareNextState(Cell& cell) {
+    foreach (Transition tran, dataMan->statesListInfo[cell.stateId].transitions) {
+        if ( transition(tran, cell) ) { // nie daje lgowy ze przez *
+            cell.nextStateId = tran.targetStateId;
             prepareNextValues(cell, tran);
             break;
         }
@@ -30,16 +30,19 @@ bool Engine::transition(const Transition& transition, const Cell &cell) {
                  // jesli jest koniunkcja musi spelnic wszystkie warunki
                  if ( i < (transition.conditions.size() - 1)) {
                     continue;
-                 } else {
-                    return true;
                  }
             } else {
             // jesli nie, to przejscie (transition) jest prawdziwe
                 return true;
             }
+        } else {
+            if (transition.isConjunction) {
+                return false;
+            }
         }
     }
-    return false;
+    //dla wszystkich prawdziwych
+    return true;
 }
 
 // sprawdza wszystki mozliwe kombinacje warunkow, zalezne od ilosci dobieranych sasiadow (additionalNeighbours)
@@ -79,7 +82,7 @@ std::vector<double> Engine::nextValues(bool neighbours[3][3], int field, const C
     for (int i = 0; i < 2; ++i) {
         for (int j = 0; j < 2; ++j) {
             if (neighbours) {
-                vector.push_back(cell.values[field]);
+                vector.push_back(cell.values[field]); //TODO blad
             }
         }
     }
@@ -89,21 +92,24 @@ std::vector<double> Engine::nextValues(bool neighbours[3][3], int field, const C
 // sprawdza, czy dla podanych wartosci (pobranych juz z pol wybranych sasiadow) warunek jest prawdziwy
 bool Engine::checkCondition(const std::vector<double> &leftValues, Relation leftRelation,
                             const std::vector<double> &rightValues, Relation rightRelation, Sign sign) {
+
+    std::vector<double> leftValuesVector = calculateValues(leftValues, leftRelation);
+    std::vector<double> rightValuesVector = calculateValues(rightValues, rightRelation);
     switch (sign) {
     case lower:
         // zwraca liste, gdyz w porownaniu 1-1 porownuje liste wartosci, a jedna wartosc dla sumy, czy sredniej,
         // dalej moze byc przetrzymywana w liscie
-        foreach (double leftValue, calculateValues(leftValues, leftRelation)) {
-            foreach (double rightValue, calculateValues(rightValues, rightRelation)) {
-                if (! leftValue < rightValue ){
+        foreach (double leftValue, leftValuesVector) {
+            foreach (double rightValue, rightValuesVector) { // TODO
+                if (! (leftValue < rightValue) ){
                     return false;
                 }
             }
         }
         break;
     case lowerEqual:
-        foreach (double leftValue, calculateValues(leftValues, leftRelation)) {
-            foreach (double rightValue, calculateValues(rightValues, rightRelation)) {
+        foreach (double leftValue, leftValuesVector) {
+            foreach (double rightValue, rightValuesVector) {
                 if (! leftValue <= rightValue ){
                     return false;
                 }
@@ -111,8 +117,8 @@ bool Engine::checkCondition(const std::vector<double> &leftValues, Relation left
         }
         break;
     case equal:
-        foreach (double leftValue, calculateValues(leftValues, leftRelation)) {
-            foreach (double rightValue, calculateValues(rightValues, rightRelation)) {
+        foreach (double leftValue, leftValuesVector) {
+            foreach (double rightValue, rightValuesVector) {
                 if (! leftValue == rightValue ){
                     return false;
                 }
@@ -120,8 +126,8 @@ bool Engine::checkCondition(const std::vector<double> &leftValues, Relation left
         }
         break;
     case greater:
-        foreach (double leftValue, calculateValues(leftValues, leftRelation)) {
-            foreach (double rightValue, calculateValues(rightValues, rightRelation)) {
+        foreach (double leftValue, leftValuesVector) {
+            foreach (double rightValue, rightValuesVector) {
                 if (! leftValue > rightValue ){
                     return false;
                 }
@@ -129,8 +135,8 @@ bool Engine::checkCondition(const std::vector<double> &leftValues, Relation left
         }
         break;
     case greaterEqual:
-        foreach (double leftValue, calculateValues(leftValues, leftRelation)) {
-            foreach (double rightValue, calculateValues(rightValues, rightRelation)) {
+        foreach (double leftValue, leftValuesVector) {
+            foreach (double rightValue, rightValuesVector) {
                 if (! leftValue >= rightValue ){
                     return false;
                 }
@@ -172,6 +178,6 @@ std::vector<double> Engine::calculateValues(const std::vector<double> &values, R
 }
 
 // przygotowywuje przyszle wartosci, na podstawie zmian zadeklarowanych w edycji celu (edit target)
-void Engine::prepareNextValues(Cell* cell, const Transition &transition) {
+void Engine::prepareNextValues(Cell& cell, const Transition &transition) {
 
 }
