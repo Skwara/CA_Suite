@@ -13,6 +13,7 @@
 #include "tools.h"
 #include "datamanager.h"
 #include "conditionwidget.h"
+#include "edittargetdialog.h"
 
 namespace Ui {
 class Tab_Logic;

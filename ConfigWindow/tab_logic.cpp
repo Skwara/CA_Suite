@@ -83,6 +83,10 @@ void Tab_Logic::on_button_removeTarget_clicked()
 void Tab_Logic::on_button_editTarget_clicked()
 {
     //TODO przy kliknieciu drugi raz na target niech sie dzieje to samo
+    if ( (activeStateLogicButton != -1) && (activeTargetLogicButton != -1) ) {
+        EditTargetDialog* dialog = new EditTargetDialog(activeStateLogicButton, activeTargetLogicButton, DATAMAN);
+        dialog->show();
+    }
 }
 
 void Tab_Logic::on_button_addCondition_clicked()
@@ -157,14 +161,12 @@ void Tab_Logic::stateLogicAction_clicked() {
 void Tab_Logic::dialogTargetButtonAction_clicked() {
     foreach (QPushButton* pb, targetsDialogList) {
         if ( pb == sender() ) {
-            QPushButton* newPb = Tools::createStateButton(DataManager::statesListInfo[pb->text().toInt()]);
+            QPushButton* newPb = Tools::createStateButton(DataManager::statesListInfo[activeStateLogicButton]);
             connect( newPb, SIGNAL(clicked()), this, SLOT(targetButtonAction_clicked()) );
             layout_targets->addWidget(newPb);
             targetsList.push_back(newPb);
             // dodanie transition do aktywnego state'a
-            Transition t;
-            t.targetStateId = pb->text().toInt();
-            DataManager::statesListInfo[activeStateLogicButton].transitions.push_back(t);
+            DATAMAN->addTransition(activeStateLogicButton);
             break;
         }
     }

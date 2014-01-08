@@ -14,11 +14,6 @@ ConditionWidget::ConditionWidget(DataManager* dm, State* state, uint transitionN
 
     connect(ui->button_removeCondition, SIGNAL(clicked()), (Tab_Logic*)parent, SLOT(button_removeCondition_clicked()));
 
-    for (uint i = 0; i < DATAMAN->names.size(); ++i) {
-        ui->comboBox_leftField->addItem(QString(DATAMAN->names[i].c_str()));
-        ui->comboBox_rightField->addItem(QString(DATAMAN->names[i].c_str()));
-    }
-
     this->state = state;
     this->transitionNumber = transitionNumber;
     this->conditionNumber = state->transitions[transitionNumber].conditions.size();
@@ -39,6 +34,11 @@ ConditionWidget::ConditionWidget(DataManager* dm, State* state, uint transitionN
         }
     }
     state->transitions[transitionNumber].conditions.push_back(condition);
+
+    for (uint i = 0; i < DATAMAN->names.size(); ++i) {
+        ui->comboBox_leftField->addItem(QString(DATAMAN->names[i].c_str()));
+        ui->comboBox_rightField->addItem(QString(DATAMAN->names[i].c_str()));
+    }
 }
 
 ConditionWidget::~ConditionWidget()

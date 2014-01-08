@@ -12,6 +12,7 @@ public:
     int targetStateId;
     bool isConjunction;
     std::vector<Condition> conditions;
+    std::vector<double> changes;
 };
 
 #endif // TRANSITION_H

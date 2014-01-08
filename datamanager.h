@@ -36,6 +36,8 @@ public:
     void removeState(uint id);
     void addCondition();
     void removeCondition(uint stateNr, uint transitionNr, uint conditionNr);
+    void addTransition(uint state);
+    void removeTransition();
 
     void removeTransitionsToState(int id);
 

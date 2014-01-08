@@ -13,6 +13,9 @@ void DataManager::addProperty(std::string name)
     for (uint i = 0; i < statesListInfo.size(); ++i) {
         names.push_back(name);
         statesListInfo[i].values.push_back(0);
+        for (uint j = 0; j < statesListInfo[i].transitions.size(); ++j) {
+            statesListInfo[i].transitions[j].changes.push_back(0);
+        }
     }
 }
 
@@ -22,6 +25,9 @@ void DataManager::removeProperty()
         if (!statesListInfo[i].values.empty()) { //TODO niekoniecznie potrzebny if, jesli fieldsList i statesListInfo dzialaja rownolegle
             names.pop_back();
             statesListInfo[i].values.pop_back();
+            for (uint j = 0; j < statesListInfo[i].transitions.size(); ++j) {
+                statesListInfo[i].transitions[j].changes.pop_back();
+            }
         }
     }
 }
@@ -50,6 +56,20 @@ void DataManager::removeCondition(uint stateNr, uint transitionNr, uint conditio
 {
     std::vector<Condition>* conditionsPtr = (std::vector<Condition>*)&(statesListInfo[stateNr].transitions[transitionNr].conditions);
     conditionsPtr->erase(conditionsPtr->begin() + conditionNr);
+}
+
+void DataManager::addTransition(uint state)
+{
+    Transition t;
+    t.targetStateId = state;
+    for (uint i = 0; i < names.size(); ++i) {
+        t.changes.push_back(0);
+    }
+    statesListInfo[state].transitions.push_back(t);
+}
+void DataManager::removeTransition()
+{
+
 }
 
 void DataManager::removeTransitionsToState(int id) {
