@@ -74,6 +74,21 @@ ConditionWidget::ConditionWidget(DataManager* dm, Condition c, State* state, uin
             }
         }
     }
+    ui->comboBox_leftField->setCurrentIndex(c.leftOperand.field);
+    ui->comboBox_rightField->setCurrentIndex(c.rightOperand.field);
+    ui->comboBox_leftRelation->setCurrentIndex(c.leftOperand.relation);
+    ui->comboBox_rightRelation->setCurrentIndex(c.rightOperand.relation);
+    ui->comboBox_sign->setCurrentIndex(c.conditionSign);
+    if (c.leftOperand.matchAll) {
+        ui->radioButton_leftAll->setChecked(true);
+    }else{
+        ui->radioButton_leftAny->setChecked(true);
+    }
+    if (c.rightOperand.matchAll) {
+        ui->radioButton_rightAll->setChecked(true);
+    }else{
+        ui->radioButton_rightAny->setChecked(true);
+    }
 }
 
 ConditionWidget::~ConditionWidget()
