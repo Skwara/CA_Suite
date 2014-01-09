@@ -15,14 +15,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->scrollArea_cells->widget()->setLayout(layout_cells);
     configWindow = new ConfigWindow(this);
 
-    //DO WYWALENIA
-    for (int i = 0; i < 40; ++i) {
-        for (int j = 0; j < 40; ++j) {
-            Cell* c = new Cell(i, j);
-            c->setColor(255, 255, 255);
-            layout_cells->addWidget(c, i, j);
-        }
-    }
+    paintCells(40, 40);
 }
 
 MainWindow::~MainWindow()
@@ -34,4 +27,20 @@ MainWindow::~MainWindow()
 void MainWindow::on_configButton_clicked()
 {
     configWindow->show();
+}
+
+void MainWindow::paintCells(uint rows, uint cols)
+{
+    for (int i = 0; i < rows; ++i) {
+        for (int j = 0; j < cols; ++j) {
+            Cell* c = new Cell(i, j);
+            c->setColor(255, 255, 255);
+            layout_cells->addWidget(c, i, j);
+        }
+    }
+}
+
+void MainWindow::clearCells()
+{
+
 }

@@ -26,6 +26,9 @@ private:
     Ui::MainWindow* ui;
     ConfigWindow* configWindow;
     QGridLayout* layout_cells;
+
+    void paintCells(uint rows, uint cols);
+    void clearCells();
 };
 
 #endif // MAINWINDOW_H
