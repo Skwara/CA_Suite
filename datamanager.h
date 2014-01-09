@@ -28,6 +28,7 @@ public:
     Neighbourhood neighbourhood;
     uint boardWidth;
     uint boardHeight;
+    uint cellSize;
 
 
     void addProperty(std::string name);

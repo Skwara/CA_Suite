@@ -74,6 +74,8 @@ ConditionWidget::ConditionWidget(DataManager* dm, Condition c, State* state, uin
             }
         }
     }
+    ui->spinBox_left->setValue(c.leftOperand.additionalNeighbours);
+    ui->spinBox_right->setValue(c.rightOperand.additionalNeighbours);
     ui->comboBox_leftField->setCurrentIndex(c.leftOperand.field);
     ui->comboBox_rightField->setCurrentIndex(c.rightOperand.field);
     ui->comboBox_leftRelation->setCurrentIndex(c.leftOperand.relation);
@@ -129,24 +131,28 @@ void ConditionWidget::setRightNeighbour(QObject* sender, uint row, uint col)
     }
 }
 
-void ConditionWidget::on_checkBox_clicked()
+void ConditionWidget::on_checkBox_clicked(bool checked)
 {
     setLeftNeighbour(sender(), 0, 0);
+    changeMaxAdditionalNeighboursNumber(ui->spinBox_left, checked);
 }
 
-void ConditionWidget::on_checkBox_2_clicked()
+void ConditionWidget::on_checkBox_2_clicked(bool checked)
 {
     setLeftNeighbour(sender(), 0, 1);
+    changeMaxAdditionalNeighboursNumber(ui->spinBox_left, checked);
 }
 
-void ConditionWidget::on_checkBox_3_clicked()
+void ConditionWidget::on_checkBox_3_clicked(bool checked)
 {
     setLeftNeighbour(sender(), 0, 2);
+    changeMaxAdditionalNeighboursNumber(ui->spinBox_left, checked);
 }
 
-void ConditionWidget::on_checkBox_4_clicked()
+void ConditionWidget::on_checkBox_4_clicked(bool checked)
 {
     setLeftNeighbour(sender(), 1, 0);
+    changeMaxAdditionalNeighboursNumber(ui->spinBox_left, checked);
 }
 
 void ConditionWidget::on_checkBox_5_clicked()
@@ -154,44 +160,52 @@ void ConditionWidget::on_checkBox_5_clicked()
     setLeftNeighbour(sender(), 1, 1);
 }
 
-void ConditionWidget::on_checkBox_6_clicked()
+void ConditionWidget::on_checkBox_6_clicked(bool checked)
 {
     setLeftNeighbour(sender(), 1, 2);
+    changeMaxAdditionalNeighboursNumber(ui->spinBox_left, checked);
 }
 
-void ConditionWidget::on_checkBox_7_clicked()
+void ConditionWidget::on_checkBox_7_clicked(bool checked)
 {
     setLeftNeighbour(sender(), 2, 0);
+    changeMaxAdditionalNeighboursNumber(ui->spinBox_left, checked);
 }
 
-void ConditionWidget::on_checkBox_8_clicked()
+void ConditionWidget::on_checkBox_8_clicked(bool checked)
 {
     setLeftNeighbour(sender(), 2, 1);
+    changeMaxAdditionalNeighboursNumber(ui->spinBox_left, checked);
 }
 
-void ConditionWidget::on_checkBox_9_clicked()
+void ConditionWidget::on_checkBox_9_clicked(bool checked)
 {
     setLeftNeighbour(sender(), 2, 2);
+    changeMaxAdditionalNeighboursNumber(ui->spinBox_left, checked);
 }
 
-void ConditionWidget::on_checkBox_10_clicked()
+void ConditionWidget::on_checkBox_10_clicked(bool checked)
 {
     setRightNeighbour(sender(), 0, 0);
+    changeMaxAdditionalNeighboursNumber(ui->spinBox_right, checked);
 }
 
-void ConditionWidget::on_checkBox_11_clicked()
+void ConditionWidget::on_checkBox_11_clicked(bool checked)
 {
     setRightNeighbour(sender(), 0, 1);
+    changeMaxAdditionalNeighboursNumber(ui->spinBox_right, checked);
 }
 
-void ConditionWidget::on_checkBox_12_clicked()
+void ConditionWidget::on_checkBox_12_clicked(bool checked)
 {
     setRightNeighbour(sender(), 0, 2);
+    changeMaxAdditionalNeighboursNumber(ui->spinBox_right, checked);
 }
 
-void ConditionWidget::on_checkBox_13_clicked()
+void ConditionWidget::on_checkBox_13_clicked(bool checked)
 {
     setRightNeighbour(sender(), 1, 0);
+    changeMaxAdditionalNeighboursNumber(ui->spinBox_right, checked);
 }
 
 void ConditionWidget::on_checkBox_14_clicked()
@@ -199,24 +213,36 @@ void ConditionWidget::on_checkBox_14_clicked()
     setRightNeighbour(sender(), 1, 1);
 }
 
-void ConditionWidget::on_checkBox_15_clicked()
+void ConditionWidget::on_checkBox_15_clicked(bool checked)
 {
     setRightNeighbour(sender(), 1, 2);
+    changeMaxAdditionalNeighboursNumber(ui->spinBox_right, checked);
 }
 
-void ConditionWidget::on_checkBox_16_clicked()
+void ConditionWidget::on_checkBox_16_clicked(bool checked)
 {
     setRightNeighbour(sender(), 2, 0);
+    changeMaxAdditionalNeighboursNumber(ui->spinBox_right, checked);
 }
 
-void ConditionWidget::on_checkBox_17_clicked()
+void ConditionWidget::on_checkBox_17_clicked(bool checked)
 {
     setRightNeighbour(sender(), 2, 1);
+    changeMaxAdditionalNeighboursNumber(ui->spinBox_right, checked);
 }
 
-void ConditionWidget::on_checkBox_18_clicked()
+void ConditionWidget::on_checkBox_18_clicked(bool checked)
 {
     setRightNeighbour(sender(), 2, 2);
+    changeMaxAdditionalNeighboursNumber(ui->spinBox_right, checked);
+}
+
+void ConditionWidget::changeMaxAdditionalNeighboursNumber(QSpinBox* sb, bool check) {
+    if (check) {
+        sb->setMaximum( (sb->maximum()) - 1);
+    } else {
+        sb->setMaximum( (sb->maximum()) + 1 );
+    }
 }
 
 void ConditionWidget::on_spinBox_left_valueChanged(int arg1)

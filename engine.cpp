@@ -9,11 +9,17 @@ Engine::Engine(DataManager *dm)
     dataMan = dm;
 }
 
+void Engine::start(std::vector<std::vector<Cell *> > cells) {
+//    foreach (Cell* c, cells) {
+//        prepareNextState(c);
+//    }
+}
+
 // przygotowywuje przyszly stan
-void Engine::prepareNextState(Cell& cell) {
-    foreach (Transition tran, dataMan->statesListInfo[cell.stateId].transitions) {
-        if ( transition(tran, cell) ) { // nie daje lgowy ze przez *
-            cell.nextStateId = tran.targetStateId;
+void Engine::prepareNextState(Cell* cell) {
+    foreach (Transition tran, dataMan->statesListInfo[cell->stateId].transitions) {
+        if ( transition(tran, *cell) ) { // nie daje lgowy ze przez *
+            cell->nextStateId = tran.targetStateId;
             prepareNextValues(cell, tran);
             break;
         }
@@ -47,6 +53,7 @@ bool Engine::transition(const Transition& transition, const Cell &cell) {
 
 // sprawdza wszystki mozliwe kombinacje warunkow, zalezne od ilosci dobieranych sasiadow (additionalNeighbours)
 bool Engine::checkCombinationsOfConditions(const Cell &cell, const Condition &condition) {
+
     // tworzenie kopii sasiadow, do pozniejszej edycji
     bool leftNeighbours[3][3];
     for (int i = 0; i < 3; ++i) {
@@ -57,6 +64,8 @@ bool Engine::checkCombinationsOfConditions(const Cell &cell, const Condition &co
     std::vector<bool*> possibleLeftNeighbours =
             getPossibleNeighboursVector( leftNeighbours, condition.leftOperand.additionalNeighbours);
 
+    bool rightResult = false;
+    bool leftResult = false;
     // petla po mozliwych lewych przypadkach
     while (nextCombination(possibleLeftNeighbours)) {
         // przygotowanie kopii prawych sasiadow, do pozneijszej edycji
@@ -70,19 +79,39 @@ bool Engine::checkCombinationsOfConditions(const Cell &cell, const Condition &co
                 getPossibleNeighboursVector( rightNeighbours, condition.rightOperand.additionalNeighbours);
 
         // petla po mozliwych prawych przypadkach
+        rightResult = false; // jesli ani razu warunek sie nie sprawdzi, jesli jest matchAny, to szuka do ost warunku
         while (nextCombination(possibleRightNeighbours)) {
             if (checkCondition(nextValues(leftNeighbours, condition.leftOperand.field, cell), condition.leftOperand.relation,
-                               nextValues(rightNeighbours, condition.rightOperand.field, cell), condition.rightOperand.relation, condition.conditionSign)) {
-                return true;
+                               nextValues(rightNeighbours, condition.rightOperand.field, cell), condition.rightOperand.relation,
+                               condition.conditionSign)) {
+                if (condition.rightOperand.matchAll) {
+                    rightResult = true; // poki warunek nie zwroci falszu, kontynujemy dzialanie podstawianie prawdy
+                } else {
+                    rightResult = true; // dla match any, przy pierwszej prawdzie konczymy
+                    break;
+                }
+            } else {
+                if (condition.rightOperand.matchAll) {
+                    rightResult = false; // dla matchAll przy pierwszym falszu konczymy petle
+                    break;
+                }
             }
-        // TODO TU ROBIE WETWT$#T#T$#T
 
+            if (rightResult) {
+                if (condition.leftOperand.matchAll) {
+                    leftResult = true; // poki nie bedzie inaczej
+                } else {
+                    return true; // jesli dopasowal choc jeden z lewej strony
+                }
+            } else {
+                if (condition.leftOperand.matchAll) {
+                    return false; // jesli nie dopasowal choc jednego z lewej strony
+                }
+            }
         }
     }
-
-
-
-    return false;
+    // domyslnie jest falsz, jesli przejdzie wszystkie warunki poprawnie bedzie prawda
+    return leftResult;
 }
 
 std::vector<bool*> Engine::getPossibleNeighboursVector(bool neighbours[3][3], int additionalNeighbours) {
@@ -131,6 +160,7 @@ bool Engine::nextCombination(std::vector<bool*> additionalNeighbours) {
             return true;
         }
     }
+    return false;
 }
 
 // na podstawie sasiadow tworzy liste ich wartosci
@@ -235,6 +265,15 @@ std::vector<double> Engine::calculateValues(const std::vector<double> &values, R
 }
 
 // przygotowywuje przyszle wartosci, na podstawie zmian zadeklarowanych w edycji celu (edit target)
-void Engine::prepareNextValues(Cell& cell, const Transition &transition) {
-
+void Engine::prepareNextValues(Cell* cell, const Transition &transition) {
+    // TODO zmienic warunek tego ifa, jak bd pole w dataManie
+    if (true) {
+        for (uint i = 0; i < cell->nextValues.size(); ++i) {
+            cell->nextValues[i] = cell->values[i] - transition.changes[i];
+        }
+    } else {
+        for (uint i = 0; i < cell->nextValues.size(); ++i) {
+            cell->nextValues[i] = dataMan->statesListInfo[cell->nextStateId].values[i];
+        }
+    }
 }

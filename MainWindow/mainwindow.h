@@ -6,6 +6,7 @@
 
 #include "configwindow.h"
 #include "cell.h"
+#include "engine.h"
 
 namespace Ui {
 class MainWindow;
@@ -22,10 +23,15 @@ public:
 private slots:
     void on_configButton_clicked();
 
+    void on_startButton_clicked();
+
 private:
     Ui::MainWindow* ui;
     ConfigWindow* configWindow;
     QGridLayout* layout_cells;
+    DataManager *dataMan;
+    Engine engine;
+    std::vector< std::vector<Cell*> > cells;
 
     void paintCells(uint rows, uint cols);
     void clearCells();

@@ -7,6 +7,15 @@ Tab_General::Tab_General(DataManager* dm, QWidget *parent) :
 {
     ui->setupUi(this);
     dataMan = dm;
+
+    dataMan->neighbourhood = Neumann;
+    dataMan->cellSize = ui->spinBox_cellSize->value();
+    dataMan->boardHeight = 10;
+    dataMan->boardWidth = 10;
+
+    ui->spinBox_boardHeight->setValue(10);
+    ui->spinBox_boardWidth->setValue(10);
+    ui->radioButton_Moore->setChecked(true);
 }
 
 Tab_General::~Tab_General()
@@ -42,4 +51,9 @@ void Tab_General::on_pushButton_save_clicked()
 void Tab_General::on_pushButton_load_clicked()
 {
     dataMan->loadData();
+}
+
+void Tab_General::on_spinBox_cellSize_valueChanged(int arg1)
+{
+    dataMan->cellSize = arg1;
 }
