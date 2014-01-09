@@ -269,7 +269,7 @@ void Engine::prepareNextValues(Cell* cell, const Transition &transition) {
     // TODO zmienic warunek tego ifa, jak bd pole w dataManie
     if (true) {
         for (uint i = 0; i < cell->nextValues.size(); ++i) {
-            cell->nextValues[i] = cell->values[i] - transition.changes[i];
+            cell->nextValues[i] = cell->values[i] + transition.changes[i];
         }
     } else {
         for (uint i = 0; i < cell->nextValues.size(); ++i) {
