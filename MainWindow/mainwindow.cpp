@@ -7,10 +7,10 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     layout_cells = new QGridLayout();
-    layout_cells->setAlignment(Qt::AlignLeft);
+    layout_cells->setAlignment(Qt::AlignCenter);
     layout_cells->setHorizontalSpacing(0);
     layout_cells->setVerticalSpacing(0);
-    ui->scrollArea_cells->setLayout(layout_cells);
+    ui->scrollArea_cells->widget()->setLayout(layout_cells);
     configWindow = new ConfigWindow(this);
 
     //DO WYWALENIA
