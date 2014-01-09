@@ -7,15 +7,17 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     layout_cells = new QGridLayout();
-    layout_cells->setAlignment(Qt::AlignCenter);
+    layout_cells->setAlignment(Qt::AlignLeft);
+    layout_cells->setAlignment(Qt::AlignTop);
     layout_cells->setHorizontalSpacing(0);
     layout_cells->setVerticalSpacing(0);
+    layout_cells->setMargin(1);
     ui->scrollArea_cells->widget()->setLayout(layout_cells);
     configWindow = new ConfigWindow(this);
 
     //DO WYWALENIA
-    for (int i = 0; i < 20; ++i) {
-        for (int j = 0; j < 20; ++j) {
+    for (int i = 0; i < 40; ++i) {
+        for (int j = 0; j < 40; ++j) {
             Cell* c = new Cell(i, j);
             c->setColor(255, 255, 255);
             layout_cells->addWidget(c, i, j);

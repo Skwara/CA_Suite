@@ -5,10 +5,10 @@ Cell::Cell(uint row, uint col, QWidget * parent ) :
 {
     this->row = row;
     this->col = col;
-    setMinimumHeight(20);
-    setMinimumWidth(20);
-    setMaximumHeight(20);
-    setMaximumWidth(20);
+    setMinimumHeight(10);
+    setMinimumWidth(10);
+    setMaximumHeight(10);
+    setMaximumWidth(10);
     //setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum); // nie dziala
     setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 }
