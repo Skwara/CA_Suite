@@ -47,7 +47,7 @@ void DataManager::removeState(uint id)
     }
 }
 
-void DataManager::addCondition()
+void DataManager::addCondition(uint state, uint transition, QWidget* parent)
 {
 
 }
@@ -58,18 +58,18 @@ void DataManager::removeCondition(uint stateNr, uint transitionNr, uint conditio
     conditionsPtr->erase(conditionsPtr->begin() + conditionNr);
 }
 
-void DataManager::addTransition(uint state)
+void DataManager::addTransition(uint state, uint transition)
 {
     Transition t;
-    t.targetStateId = state;
+    t.targetStateId = transition;
     for (uint i = 0; i < names.size(); ++i) {
         t.changes.push_back(0);
     }
     statesListInfo[state].transitions.push_back(t);
 }
-void DataManager::removeTransition()
+void DataManager::removeTransition(uint state, uint transition)
 {
-
+    statesListInfo[state].transitions.erase(statesListInfo[state].transitions.begin() + transition);
 }
 
 void DataManager::removeTransitionsToState(int id) {

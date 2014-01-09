@@ -43,6 +43,39 @@ ConditionWidget::ConditionWidget(DataManager* dm, State* state, uint transitionN
     }
 }
 
+ConditionWidget::ConditionWidget(DataManager* dm, Condition c, State* state, uint transitionNumber, uint conditionNumber, QWidget *parent) :
+    QWidget(parent),
+    ui(new Ui::ConditionWidget)
+{
+    ui->setupUi(this);
+
+    dataMan = dm;
+
+    connect(ui->button_removeCondition, SIGNAL(clicked()), (Tab_Logic*)parent, SLOT(button_removeCondition_clicked()));
+
+    this->state = state;
+    this->transitionNumber = transitionNumber;
+    this->conditionNumber = conditionNumber;
+
+    //init
+    ui->comboBox_leftField->addItem(QString("State ID"));
+    ui->comboBox_rightField->addItem(QString("State ID"));
+    for (uint i = 0; i < DATAMAN->names.size(); ++i) {
+        ui->comboBox_leftField->addItem(QString(DATAMAN->names[i].c_str()));
+        ui->comboBox_rightField->addItem(QString(DATAMAN->names[i].c_str()));
+    }
+    for (int j = 0; j < 3; ++j) { //zakladajac sasiadow 3x3
+        for (int k = 0; k < 3; ++k) {
+            if (c.leftOperand.neighbours[j][k]) {
+                ((QCheckBox*)(ui->gridLayout->itemAtPosition(j, k)->widget()))->setChecked(true);
+            }
+            if (c.rightOperand.neighbours[j][k]) {
+                ((QCheckBox*)(ui->gridLayout_2->itemAtPosition(j, k)->widget()))->setChecked(true);
+            }
+        }
+    }
+}
+
 ConditionWidget::~ConditionWidget()
 {
     delete ui;

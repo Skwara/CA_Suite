@@ -18,6 +18,7 @@ class ConditionWidget : public QWidget
 
 public:
     explicit ConditionWidget(DataManager* dm, State* state, uint transitionNumber, QWidget *parent);
+    explicit ConditionWidget(DataManager* dm, Condition c, State* state, uint transitionNumber, uint conditionNumber, QWidget *parent);
     ~ConditionWidget();
 
     uint getStateNumber();

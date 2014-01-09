@@ -60,6 +60,7 @@ private:
     void addStateToLogic(State s);
     void removeStateFromLogic(int removedStateId);
     void clearConditions();
+    void loadConditions();
     void clearOperand(QLayout* operand);
     Operand getOperand(QLayout* operandLayout);
     Transition getTransition();

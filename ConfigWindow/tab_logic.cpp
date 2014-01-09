@@ -75,7 +75,7 @@ void Tab_Logic::on_button_removeTarget_clicked()
         delete targetsList[activeTargetLogicButton];
         targetsList.erase(targetsList.begin() + activeTargetLogicButton);
         // usuwanie informacji o poszczegolnym warunku z listy stanow
-        DataManager::statesListInfo[activeStateLogicButton].transitions.erase(DataManager::statesListInfo[activeStateLogicButton].transitions.begin() + activeTargetLogicButton);
+        DATAMAN->removeTransition(activeStateLogicButton, activeTargetLogicButton);
         activeTargetLogicButton = -1;
     }
 }
@@ -161,12 +161,12 @@ void Tab_Logic::stateLogicAction_clicked() {
 void Tab_Logic::dialogTargetButtonAction_clicked() {
     foreach (QPushButton* pb, targetsDialogList) {
         if ( pb == sender() ) {
-            QPushButton* newPb = Tools::createStateButton(DataManager::statesListInfo[activeStateLogicButton]);
+            QPushButton* newPb = Tools::createStateButton(DataManager::statesListInfo[pb->text().toInt()]);
             connect( newPb, SIGNAL(clicked()), this, SLOT(targetButtonAction_clicked()) );
             layout_targets->addWidget(newPb);
             targetsList.push_back(newPb);
             // dodanie transition do aktywnego state'a
-            DATAMAN->addTransition(activeStateLogicButton);
+            DATAMAN->addTransition(activeStateLogicButton, pb->text().toInt());
             break;
         }
     }
@@ -183,6 +183,7 @@ void Tab_Logic::targetButtonAction_clicked() {
                 clearConditions();
             }
             activeTargetLogicButton = i;
+            loadConditions();
             //layout_conditions->addWidget(new ConditionWidget());
             break;
         }
@@ -201,6 +202,14 @@ void Tab_Logic::clearConditions() {
     QLayoutItem* item;
     while ((item = layout_conditions->takeAt(0))) {
         delete item->widget();
+    }
+}
+
+void Tab_Logic::loadConditions() {
+    for (uint i = 0; i < DATAMAN->statesListInfo[activeStateLogicButton].transitions[activeTargetLogicButton].conditions.size(); ++i) {
+        Condition c = DATAMAN->statesListInfo[activeStateLogicButton].transitions[activeTargetLogicButton].conditions[i];
+        ConditionWidget* cw = new ConditionWidget(DATAMAN, c, &(DATAMAN->statesListInfo[activeStateLogicButton]), activeTargetLogicButton, i, this);
+        layout_conditions->addWidget(cw);
     }
 }
 

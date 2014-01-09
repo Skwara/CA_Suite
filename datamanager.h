@@ -34,10 +34,10 @@ public:
     void removeProperty();
     void addState(State s);
     void removeState(uint id);
-    void addCondition();
+    void addCondition(uint state, uint transition, QWidget* parent);
     void removeCondition(uint stateNr, uint transitionNr, uint conditionNr);
-    void addTransition(uint state);
-    void removeTransition();
+    void addTransition(uint state, uint transition);
+    void removeTransition(uint state, uint transition);
 
     void removeTransitionsToState(int id);
 
