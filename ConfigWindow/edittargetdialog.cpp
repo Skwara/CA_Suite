@@ -50,3 +50,8 @@ void EditTargetDialog::valueChanged(double value)
         }
     }
 }
+
+void EditTargetDialog::on_checkBox_clicked(bool checked)
+{
+    DATAMAN->statesListInfo[stateNr].transitions[transitionNr].applyChanges = checked;
+}

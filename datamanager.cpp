@@ -62,6 +62,7 @@ void DataManager::addTransition(uint state, uint transition)
 {
     Transition t;
     t.targetStateId = transition;
+    t.applyChanges = false;
     for (uint i = 0; i < names.size(); ++i) {
         t.changes.push_back(0);
     }

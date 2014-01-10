@@ -25,7 +25,7 @@ private:
     bool nextCombination(std::vector<bool*> additionalNeighbours);
     std::vector<double> nextValues(bool neighbours[3][3], int field, const Cell &cell);
     bool checkCondition(const std::vector<double> &leftValues, Relation leftRelation,
-                                const std::vector<double> &rightValues, Relation rightRelation, Sign sign);
+                        const std::vector<double> &rightValues, Relation rightRelation, Sign sign);
     std::vector<double> calculateValues(const std::vector<double> &values, Relation relation);
     void prepareNextValues(Cell* cell, const Transition &transition);
 };

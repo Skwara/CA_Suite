@@ -21,6 +21,8 @@ public:
 private slots:
     void valueChanged(double value);
 
+    void on_checkBox_clicked(bool checked);
+
 private:
     Ui::EditTargetDialog *ui;
     DataManager* dataMan;

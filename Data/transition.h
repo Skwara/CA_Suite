@@ -11,6 +11,7 @@ public:
 
     int targetStateId;
     bool isConjunction;
+    bool applyChanges;
     std::vector<Condition> conditions;
     std::vector<double> changes;
 };
