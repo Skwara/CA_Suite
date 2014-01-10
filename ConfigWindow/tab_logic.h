@@ -42,6 +42,8 @@ private slots:
     void on_button_addCondition_clicked();
     void button_removeCondition_clicked();
 
+    void on_checkBox_clicked(bool checked);
+
 private:
     Ui::Tab_Logic *ui;
     DataManager* dataMan;

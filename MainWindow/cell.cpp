@@ -41,7 +41,6 @@ void Cell::clicked()
     setColor(color.red(), color.green(), color.blue());
 }
 
-// TODO
 void Cell::addNeighbours(const std::vector< std::vector<Cell*> >& cells) {
     bool isLeft = true;
     bool isRight = true;
@@ -130,4 +129,14 @@ void Cell::addNeighbours(const std::vector< std::vector<Cell*> >& cells) {
     default:
         break;
     }
+}
+
+void Cell::setNextState() {
+    if (stateId != nextStateId) {
+        stateId = nextStateId;
+        QColor color = dataMan->statesListInfo[stateId].color;
+        setColor(color.red(), color.green(), color.blue());
+    }
+    values = nextValues;
+
 }

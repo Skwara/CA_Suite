@@ -58,7 +58,7 @@ void Tab_Logic::on_button_addTarget_clicked()
         QVBoxLayout* vl = new QVBoxLayout();
         d->setLayout(vl);
         connect( d, SIGNAL(finished(int)), this, SLOT(deleteTargetDialogAction()));
-        foreach (State s, DataManager::statesListInfo) {
+        foreach (State s, dataMan->statesListInfo) {
             QPushButton* pb = Tools::createStateButton(s);
             connect( pb, SIGNAL(clicked()), this, SLOT(dialogTargetButtonAction_clicked()) );
             targetsDialogList.push_back(pb);
@@ -84,7 +84,7 @@ void Tab_Logic::on_button_editTarget_clicked()
 {
     if ( (activeStateLogicButton != -1) && (activeTargetLogicButton != -1) ) {
         EditTargetDialog* dialog = new EditTargetDialog(activeStateLogicButton, activeTargetLogicButton, DATAMAN);
-        dialog->show();
+        dialog->exec();
     }
 }
 
@@ -160,8 +160,8 @@ void Tab_Logic::stateLogicAction_clicked() {
                 targetsList.erase(targetsList.begin());
             }
             // dodawanei nowych
-            for (uint i = 0; i < ((State) DataManager::statesListInfo[activeStateLogicButton]).transitions.size(); ++i) {
-                QPushButton* pb = Tools::createStateButton(DataManager::statesListInfo[((State) DataManager::statesListInfo[activeStateLogicButton]).transitions[i].targetStateId]);
+            for (uint i = 0; i < ((State) dataMan->statesListInfo[activeStateLogicButton]).transitions.size(); ++i) {
+                QPushButton* pb = Tools::createStateButton(dataMan->statesListInfo[((State) dataMan->statesListInfo[activeStateLogicButton]).transitions[i].targetStateId]);
                 connect( pb, SIGNAL(clicked()), this, SLOT(targetButtonAction_clicked()) );
                 layout_targets->addWidget(pb);
                 targetsList.push_back(pb);
@@ -174,7 +174,7 @@ void Tab_Logic::stateLogicAction_clicked() {
 void Tab_Logic::dialogTargetButtonAction_clicked() {
     foreach (QPushButton* pb, targetsDialogList) {
         if ( pb == sender() ) {
-            QPushButton* newPb = Tools::createStateButton(DataManager::statesListInfo[pb->text().toInt()]);
+            QPushButton* newPb = Tools::createStateButton(dataMan->statesListInfo[pb->text().toInt()]);
             connect( newPb, SIGNAL(clicked()), this, SLOT(targetButtonAction_clicked()) );
             layout_targets->addWidget(newPb);
             targetsList.push_back(newPb);
@@ -277,4 +277,11 @@ Transition Tab_Logic::getTransition() {
         t.conditions.push_back(c);
     }
     return t;
+}
+
+void Tab_Logic::on_checkBox_clicked(bool checked)
+{
+    if ( (activeStateLogicButton != -1) && (activeTargetLogicButton != -1) ){
+        dataMan->statesListInfo[activeStateLogicButton].transitions[activeTargetLogicButton].isConjunction = checked;
+    }
 }

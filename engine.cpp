@@ -10,9 +10,16 @@ Engine::Engine(DataManager *dm)
 }
 
 void Engine::start(std::vector<std::vector<Cell *> > cells) {
-//    foreach (Cell* c, cells) {
-//        prepareNextState(c);
-//    }
+    for (uint i = 0; i < cells.size(); ++i) {
+        for (uint j = 0; j < cells[0].size(); ++j) {
+            prepareNextState(cells[i][j]);
+        }
+    }
+    for (uint i = 0; i < cells.size(); ++i) {
+        for (uint j = 0; j < cells[0].size(); ++j) {
+            cells[i][j]->setNextState();
+        }
+    }
 }
 
 // przygotowywuje przyszly stan

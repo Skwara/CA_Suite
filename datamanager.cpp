@@ -1,6 +1,6 @@
 #include "datamanager.h"
 
-std::vector<State> DataManager::statesListInfo;
+//std::vector<State> DataManager::statesListInfo;
 
 DataManager::DataManager()
 {

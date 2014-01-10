@@ -23,6 +23,7 @@ public:
 
     void setColor(uint r, uint g, uint b);
     void addNeighbours(const std::vector<std::vector<Cell *> > &cells);
+    void setNextState();
 
 protected:
     void mousePressEvent( QMouseEvent * event );

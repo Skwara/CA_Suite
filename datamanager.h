@@ -23,7 +23,8 @@ class DataManager
 public:
     DataManager();
 
-    static std::vector<State> statesListInfo;
+    //static std::vector<State> statesListInfo;
+    std::vector<State> statesListInfo;
     std::vector<std::string> names;
     Neighbourhood neighbourhood;
     uint boardWidth;

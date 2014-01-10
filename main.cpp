@@ -13,17 +13,13 @@ int main(int argc, char *argv[])
 
 }
 
-// nie ma malego matcha z operandow, koncze pisac funkcje od kombinacji
-
-// mozna by zmienic ramke na domyslne tlo, wtedy wygladaloby jakby byl wcisniety, analogiczny efekt jest dla czarnego klacka z biala ramka
-
 // CO TRZEBA JESZCZE ZROBIC
-
-// !!! - dodac sasiadow, metoda addNeighbours z Cell wywoluje sie przy paintcie w mainWindow (zrobione addNeighbours)
 
 // - priorytety targetow
 // - stala w warunku
 // - wplyw zmiany typu sasiadow, na widoczosc sasiadow -> mysle zeby zrobic narazie jeden typ sasiedztwa
+
+
 // - jak chcemy dynamiczna zmiane wartosci, to mysle, ze najlepiej byloby sprawdzac co iteracje czy jakas zmienna w configwindow
 //      sie zmienila na true, jesli tak, to mozna by zastapic stary dm nowym, a do tego trzebaby bylo przekazywac kopie dm
 //      do mainWindow i cellow, narazie zrobilem na referncji

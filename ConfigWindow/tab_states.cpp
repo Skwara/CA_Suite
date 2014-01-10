@@ -142,14 +142,14 @@ void Tab_States::stateButtonAction_clicked() {
                 Tools::activePushButton(statesList[ui->spinBox_id->value()], false);
             }
             // wczytanie wartosci z zapisanego juz stanu
-            ui->spinBox_id->setValue( DataManager::statesListInfo[i].id);
-            ui->lineEdit_name->setText( DataManager::statesListInfo[i].name.c_str());
-            ui->spinBox_B->setValue( DataManager::statesListInfo[i].color.blue());
-            ui->spinBox_G->setValue( DataManager::statesListInfo[i].color.green());
-            ui->spinBox_R->setValue( DataManager::statesListInfo[i].color.red());
+            ui->spinBox_id->setValue( dataMan->statesListInfo[i].id);
+            ui->lineEdit_name->setText( dataMan->statesListInfo[i].name.c_str());
+            ui->spinBox_B->setValue( dataMan->statesListInfo[i].color.blue());
+            ui->spinBox_G->setValue( dataMan->statesListInfo[i].color.green());
+            ui->spinBox_R->setValue( dataMan->statesListInfo[i].color.red());
             //przesuniecie bo pierwszym elementem jest id stanu
-            for (unsigned j = 1; j < DataManager::statesListInfo[i].values.size(); ++j) {
-                fieldsList[j - 1].second->setValue( DataManager::statesListInfo[i].values[j]);
+            for (unsigned j = 1; j < dataMan->statesListInfo[i].values.size(); ++j) {
+                fieldsList[j - 1].second->setValue( dataMan->statesListInfo[i].values[j]);
             }
             Tools::activePushButton((QPushButton*)sender(), true);
             break;
@@ -163,7 +163,7 @@ void Tab_States::stateButtonAction_clicked() {
 
 void Tab_States::saveButtonAction_clicked() {
     State s = getCurrentState();
-    DataManager::statesListInfo[s.id] = s;
+    dataMan->statesListInfo[s.id] = s;
 
     QPushButton* pb = statesList[s.id];
     pb->setText(QString("%1").arg(s.id));
@@ -191,7 +191,7 @@ State Tab_States::getCurrentState() {
 }
 
 void Tab_States::setDefaultState() {
-    ui->spinBox_id->setValue(DataManager::statesListInfo.size());
+    ui->spinBox_id->setValue(dataMan->statesListInfo.size());
     ui->lineEdit_name->setText("");
     ui->lineEdit_name->setPlaceholderText("name");
     ui->spinBox_B->setValue(0);
