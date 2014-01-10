@@ -8,7 +8,7 @@ Tab_General::Tab_General(DataManager* dm, QWidget *parent) :
     ui->setupUi(this);
     dataMan = dm;
 
-    dataMan->neighbourhood = Neumann;
+    dataMan->neighbourhood = Moore;
     dataMan->cellSize = ui->spinBox_cellSize->value();
     dataMan->boardHeight = 10;
     dataMan->boardWidth = 10;

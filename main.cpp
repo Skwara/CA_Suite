@@ -19,15 +19,16 @@ int main(int argc, char *argv[])
 
 // CO TRZEBA JESZCZE ZROBIC
 
-// !!! - dodac sasiadow, metoda addNeighbours z Cell wywoluje sie przy paintcie w mainWindow
+// !!! - dodac sasiadow, metoda addNeighbours z Cell wywoluje sie przy paintcie w mainWindow (zrobione addNeighbours)
 
 // - priorytety targetow
 // - stala w warunku
 // - wplyw zmiany typu sasiadow, na widoczosc sasiadow -> mysle zeby zrobic narazie jeden typ sasiedztwa
-// - okno edycji targetow mozna minimalizowac
 // - jak chcemy dynamiczna zmiane wartosci, to mysle, ze najlepiej byloby sprawdzac co iteracje czy jakas zmienna w configwindow
 //      sie zmienila na true, jesli tak, to mozna by zastapic stary dm nowym, a do tego trzebaby bylo przekazywac kopie dm
 //      do mainWindow i cellow, narazie zrobilem na referncji
+
+
 
 // test kombinacji
 //    bool b[3][3];

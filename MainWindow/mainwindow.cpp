@@ -6,6 +6,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    dataMan = NULL;
     layout_cells = new QGridLayout();
     layout_cells->setAlignment(Qt::AlignLeft);
     layout_cells->setAlignment(Qt::AlignTop);
@@ -69,11 +70,12 @@ void MainWindow::on_startButton_clicked()
 {
     if (configWindow->dataManager.statesListInfo.size() > 0) {
         // dodanie data managera, o ile nei zostal juz dodany
-        if (dataMan) {
+        if (dataMan == NULL) {
             dataMan = &(configWindow->dataManager);
             engine = Engine(dataMan);
-            Cell c;
-            c.dataMan = dataMan;
+            //Cell c;
+            //c.dataMan = dataMan;
+            Cell::dataMan = dataMan;
             paintCells(dataMan->boardHeight, dataMan->boardWidth);
         }
         // sprawdzenie, czy wielkosc planszy byla zmieniana

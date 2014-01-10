@@ -9,6 +9,8 @@ EditTargetDialog::EditTargetDialog(uint stateNr, uint transitionNr, DataManager*
 {
     ui->setupUi(this);
 
+    setWindowFlags(Qt::WindowMinimizeButtonHint | Qt::WindowCloseButtonHint);
+
     dataMan = dm;
     this->stateNr = stateNr;
     this->transitionNr = transitionNr;
