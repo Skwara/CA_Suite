@@ -25,13 +25,17 @@ private slots:
 
     void on_startButton_clicked();
 
+    void configWindowClosed(int result);
+
 private:
     Ui::MainWindow* ui;
     ConfigWindow* configWindow;
     QGridLayout* layout_cells;
-    DataManager *dataMan;
+    DataManager dataMan;
     Engine engine;
     std::vector< std::vector<Cell*> > cells;
+
+    bool initialized;
 
     void paintCells(uint rows, uint cols);
     void clearCells();

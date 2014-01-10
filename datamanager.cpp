@@ -2,9 +2,8 @@
 
 std::vector<State> DataManager::statesListInfo;
 
-DataManager::DataManager(Ui::ConfigWindow* ui)
+DataManager::DataManager()
 {
-    this->ui = ui;
 }
 
 void DataManager::addProperty(std::string name)

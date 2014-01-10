@@ -21,7 +21,7 @@ enum Neighbourhood {
 class DataManager
 {
 public:
-    DataManager(Ui::ConfigWindow* ui);
+    DataManager();
 
     static std::vector<State> statesListInfo;
     std::vector<std::string> names;

@@ -3,10 +3,11 @@
 
 ConfigWindow::ConfigWindow(QWidget *parent) :
     QDialog(parent),
-    dataManager(ui),
+    dataManager(),
     ui(new Ui::ConfigWindow)
 {
     ui->setupUi(this);
+    connect(this, SIGNAL(finished(int)), parent, SLOT(configWindowClosed(int)));
 
     tab_states = new Tab_States(&dataManager);
     tab_logic = new Tab_Logic(&dataManager);

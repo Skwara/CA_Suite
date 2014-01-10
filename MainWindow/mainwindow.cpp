@@ -6,7 +6,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    dataMan = NULL;
+    initialized = false;
     layout_cells = new QGridLayout();
     layout_cells->setAlignment(Qt::AlignLeft);
     layout_cells->setAlignment(Qt::AlignTop);
@@ -70,22 +70,28 @@ void MainWindow::on_startButton_clicked()
 {
     if (configWindow->dataManager.statesListInfo.size() > 0) {
         // dodanie data managera, o ile nei zostal juz dodany
-        if (dataMan == NULL) {
-            dataMan = &(configWindow->dataManager);
-            engine = Engine(dataMan);
+        if (!initialized) {
+            //dataMan = configWindow->dataManager; //niepotrzebne bo to sie dzieje przy zamknieciu configWindow
+            engine = Engine(&dataMan);
             //Cell c;
             //c.dataMan = dataMan;
-            Cell::dataMan = dataMan;
-            paintCells(dataMan->boardHeight, dataMan->boardWidth);
+            Cell::dataMan = &dataMan;
+            paintCells(dataMan.boardHeight, dataMan.boardWidth);
+            initialized = true;
         }
         // sprawdzenie, czy wielkosc planszy byla zmieniana
-        if (dataMan->boardHeight*dataMan->boardWidth != cells.size() * cells[0].size()) {
+        if (dataMan.boardHeight * dataMan.boardWidth != cells.size() * cells[0].size()) {
             clearCells();
-            if (dataMan->statesListInfo.size() > 0) {
-                paintCells(dataMan->boardHeight, dataMan->boardWidth);
+            if (dataMan.statesListInfo.size() > 0) {
+                paintCells(dataMan.boardHeight, dataMan.boardWidth);
             }
         }
 
         engine.start(cells);
     }
+}
+
+void MainWindow::configWindowClosed(int result)
+{
+    this->dataMan = configWindow->dataManager;
 }
