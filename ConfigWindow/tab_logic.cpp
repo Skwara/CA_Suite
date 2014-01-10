@@ -40,7 +40,7 @@ Tab_Logic::~Tab_Logic()
 //wywolywana przy kliknieciu na LogicTab
 void Tab_Logic::pageActivated() {
     foreach (QPushButton* pb, statesLogicList) {
-        removeStateFromLogic(pb->text().toInt());
+        removeStateFromLogicOnlyButtons(pb->text().toInt()); //ta funkcja to fix do buga (brzydkie, ale dziala)
     }
     for (uint i = targetsList.size(); i > 0; --i) {
         Tools::removeStateButton(targetsList, i-1);
@@ -82,7 +82,6 @@ void Tab_Logic::on_button_removeTarget_clicked()
 
 void Tab_Logic::on_button_editTarget_clicked()
 {
-    //TODO przy kliknieciu drugi raz na target niech sie dzieje to samo
     if ( (activeStateLogicButton != -1) && (activeTargetLogicButton != -1) ) {
         EditTargetDialog* dialog = new EditTargetDialog(activeStateLogicButton, activeTargetLogicButton, DATAMAN);
         dialog->show();
@@ -118,6 +117,20 @@ void Tab_Logic::removeStateFromLogic(int removedStateId) {
     Tools::removeStateButton(targetsDialogList, removedStateId);
     // usuwanie transitions'ow celujacych w usunietego state'a
     DATAMAN->removeTransitionsToState(removedStateId);
+    // dla aktywnego stanu w logic, usun button
+    for (uint i = 0; i < targetsList.size(); ++i) {
+        if (targetsList[i]->text() == QString("%1").arg(removedStateId)) {
+            delete targetsList[i];
+            targetsList.erase(targetsList.begin() + i);
+            --i;
+        }
+    }
+}
+
+//fix do buga
+void Tab_Logic::removeStateFromLogicOnlyButtons(int removedStateId) {
+    Tools::removeStateButton(statesLogicList, removedStateId);
+    Tools::removeStateButton(targetsDialogList, removedStateId);
     // dla aktywnego stanu w logic, usun button
     for (uint i = 0; i < targetsList.size(); ++i) {
         if (targetsList[i]->text() == QString("%1").arg(removedStateId)) {
@@ -174,16 +187,22 @@ void Tab_Logic::dialogTargetButtonAction_clicked() {
 
 void Tab_Logic::targetButtonAction_clicked() {
     if (activeTargetLogicButton != -1) {
-        Tools::activePushButton(targetsList[activeTargetLogicButton], false);
+        if (targetsList[activeTargetLogicButton] == sender()) {
+            on_button_editTarget_clicked();
+        }else{
+            Tools::activePushButton(targetsList[activeTargetLogicButton], false);
+        }
     }
     for (uint i = 0; i < targetsList.size(); ++i) {
         if ( targetsList[i] == sender()  ) {
             Tools::activePushButton(targetsList[i], true);
             if ( (uint) activeTargetLogicButton != i ) {
                 clearConditions();
+                activeTargetLogicButton = i;
+                loadConditions();
+            }else{
+                activeTargetLogicButton = i;
             }
-            activeTargetLogicButton = i;
-            loadConditions();
             //layout_conditions->addWidget(new ConditionWidget());
             break;
         }

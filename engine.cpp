@@ -266,7 +266,6 @@ std::vector<double> Engine::calculateValues(const std::vector<double> &values, R
 
 // przygotowywuje przyszle wartosci, na podstawie zmian zadeklarowanych w edycji celu (edit target)
 void Engine::prepareNextValues(Cell* cell, const Transition &transition) {
-    // TODO zmienic warunek tego ifa, jak bd pole w dataManie
     if (transition.applyChanges) {
         for (uint i = 0; i < cell->nextValues.size(); ++i) {
             cell->nextValues[i] = cell->values[i] + transition.changes[i];

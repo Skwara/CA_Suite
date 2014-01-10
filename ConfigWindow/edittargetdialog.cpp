@@ -40,8 +40,6 @@ EditTargetDialog::~EditTargetDialog()
 
 void EditTargetDialog::valueChanged(double value)
 {
-    //TODO changes w kazdym transition musza sie dodawac i usuwac w tym samym momencie, w ktorym dodawane i usuwane sa names
-    //oraz przy dodawaniu nowego transition trzeba uzupelnic go o changes
     for (uint i = 0; i < DATAMAN->names.size(); ++i) {
         if ((QDoubleSpinBox*)sender() == ui->scrollArea->layout()->itemAt(2*i+1)->widget()) {
             std::vector<double>* changes = (std::vector<double>*)&(DATAMAN->statesListInfo[stateNr].transitions[transitionNr].changes);

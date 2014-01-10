@@ -59,6 +59,7 @@ private:
 
     void addStateToLogic(State s);
     void removeStateFromLogic(int removedStateId);
+    void removeStateFromLogicOnlyButtons(int removedStateId);
     void clearConditions();
     void loadConditions();
     void clearOperand(QLayout* operand);
