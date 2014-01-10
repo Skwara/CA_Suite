@@ -169,7 +169,9 @@ std::vector<double> Engine::nextValues(bool neighbours[3][3], int field, const C
     for (int i = 0; i < 3; ++i) {
         for (int j = 0; j < 3; ++j) {
             if (neighbours[i][j]) {
-                vector.push_back(cell.neighbours[i*3 + j]->values[field]);
+                if (cell.neighbours[i*3 + j] != 0) {
+                    vector.push_back(cell.neighbours[i*3 + j]->values[field]);
+                }
             }
         }
     }
