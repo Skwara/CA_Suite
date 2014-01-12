@@ -35,9 +35,9 @@ void Tools::activePushButton(QPushButton* stateButton, bool active) {
     int b = stateButton->palette().background().color().blue();
     if (active) {
         if (r + g + b < FONT_COLOR_THRESHOLD) {
-            stateButton->setStyleSheet(QString("background-color: rgb( %1,%2,%3 ); color: rgb(255, 255, 255); border: 2px solid #ffffff").arg(r).arg(g).arg(b));
+            stateButton->setStyleSheet(QString("background-color: rgb( %1,%2,%3 ); color: rgb(255, 255, 255); border: 2px solid #C0C0C0").arg(r).arg(g).arg(b));
         } else {
-            stateButton->setStyleSheet(QString("background-color: rgb( %1,%2,%3 ); border: 2px solid #000000").arg(r).arg(g).arg(b));
+            stateButton->setStyleSheet(QString("background-color: rgb( %1,%2,%3 ); border: 2px solid #C0C0C0").arg(r).arg(g).arg(b));
         }
     } else {
         savePushButtonColor(stateButton, r, g, b);
