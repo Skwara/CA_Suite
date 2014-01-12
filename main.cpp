@@ -18,6 +18,7 @@ int main(int argc, char *argv[])
 // - priorytety targetow
 // - stala w warunku
 // - wplyw zmiany typu sasiadow, na widoczosc sasiadow -> mysle zeby zrobic narazie jeden typ sasiedztwa
+// - podpiac spinbox z dodawaniem stalej
 
 
 // - jak chcemy dynamiczna zmiane wartosci, to mysle, ze najlepiej byloby sprawdzac co iteracje czy jakas zmienna w configwindow

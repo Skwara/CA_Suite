@@ -46,8 +46,6 @@ public:
     void saveData();
     void loadData();
 
-private:
-    Ui::ConfigWindow* ui;
 };
 
 #endif // GUIMANAGER_H
