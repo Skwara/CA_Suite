@@ -94,4 +94,10 @@ void MainWindow::on_startButton_clicked()
 void MainWindow::configWindowClosed(int result)
 {
     this->dataMan = configWindow->dataManager;
+    dataMan.cellSize = ui->spinBox_cellSize->value();
+}
+
+void MainWindow::on_spinBox_cellSize_valueChanged(int arg1)
+{
+    dataMan.cellSize = arg1;
 }

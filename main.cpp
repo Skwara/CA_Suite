@@ -16,15 +16,19 @@ int main(int argc, char *argv[])
 // CO TRZEBA JESZCZE ZROBIC
 
 // - priorytety targetow
-// - stala w warunku
+// - cell size nei jest podpiety tak jak byl, trzeba go dynamicznie zrobic, aby zmniejszal plansze
 // - wplyw zmiany typu sasiadow, na widoczosc sasiadow -> mysle zeby zrobic narazie jeden typ sasiedztwa
 // - podpiac spinbox z dodawaniem stalej
-
+// - save load konfiguracji
+// - save load planszy
+// - randomize planszy
 
 // - jak chcemy dynamiczna zmiane wartosci, to mysle, ze najlepiej byloby sprawdzac co iteracje czy jakas zmienna w configwindow
 //      sie zmienila na true, jesli tak, to mozna by zastapic stary dm nowym, a do tego trzebaby bylo przekazywac kopie dm
 //      do mainWindow i cellow, narazie zrobilem na referncji
 
+
+// - moze dopiac gdzies tablice z wagami komorek
 
 
 // test kombinacji
