@@ -110,7 +110,10 @@
         <item>
          <widget class="QLabel" name="label_3">
           <property name="text">
-           <string>Cell Size:</string>
+           <string>Cell Size</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
           </property>
          </widget>
         </item>
@@ -130,7 +133,10 @@
         <item>
          <widget class="QLabel" name="label">
           <property name="text">
-           <string>Speed:</string>
+           <string>Speed</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
           </property>
          </widget>
         </item>
@@ -268,8 +274,8 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>386</width>
-           <height>226</height>
+           <width>367</width>
+           <height>215</height>
           </rect>
          </property>
         </widget>
@@ -285,7 +291,7 @@
      <x>0</x>
      <y>0</y>
      <width>525</width>
-     <height>20</height>
+     <height>22</height>
     </rect>
    </property>
   </widget>
