@@ -24,8 +24,10 @@ void Engine::start(std::vector<std::vector<Cell *> > cells) {
 
 // przygotowywuje przyszly stan
 void Engine::prepareNextState(Cell* cell) {
+//    std::cout << "-------------------------------------------" << std::endl;
+//    std::cout << cell->row << "; " << cell->col << std::endl;
     foreach (Transition tran, dataMan->statesListInfo[cell->stateId].transitions) {
-        if ( transition(tran, *cell) ) { // nie daje lgowy ze przez *
+        if ( transition(tran, *cell) ) {
             cell->nextStateId = tran.targetStateId;
             prepareNextValues(cell, tran);
             break;
@@ -55,7 +57,11 @@ bool Engine::transition(const Transition& transition, const Cell &cell) {
         }
     }
     //dla wszystkich prawdziwych
-    return true;
+    if (transition.isConjunction) {
+        return true;
+    } else {
+        return false;
+    }
 }
 
 // sprawdza wszystki mozliwe kombinacje warunkow, zalezne od ilosci dobieranych sasiadow (additionalNeighbours)
@@ -74,7 +80,7 @@ bool Engine::checkCombinationsOfConditions(const Cell &cell, const Condition &co
     bool rightResult = false;
     bool leftResult = false;
     // petla po mozliwych lewych przypadkach
-    while (nextCombination(possibleLeftNeighbours)) {
+    do {
         // przygotowanie kopii prawych sasiadow, do pozneijszej edycji
         bool rightNeighbours[3][3];
         for (int i = 0; i < 3; ++i) {
@@ -87,7 +93,7 @@ bool Engine::checkCombinationsOfConditions(const Cell &cell, const Condition &co
 
         // petla po mozliwych prawych przypadkach
         rightResult = false; // jesli ani razu warunek sie nie sprawdzi, jesli jest matchAny, to szuka do ost warunku
-        while (nextCombination(possibleRightNeighbours)) {
+        do {
             if (checkCondition(nextValues(leftNeighbours, condition.leftOperand.field, cell), condition.leftOperand.relation,
                                nextValues(rightNeighbours, condition.rightOperand.field, cell), condition.rightOperand.relation,
                                condition.conditionSign)) {
@@ -115,8 +121,8 @@ bool Engine::checkCombinationsOfConditions(const Cell &cell, const Condition &co
                     return false; // jesli nie dopasowal choc jednego z lewej strony
                 }
             }
-        }
-    }
+        } while (nextCombination(possibleRightNeighbours));
+    } while (nextCombination(possibleLeftNeighbours));
     // domyslnie jest falsz, jesli przejdzie wszystkie warunki poprawnie bedzie prawda
     return leftResult;
 }
@@ -124,16 +130,16 @@ bool Engine::checkCombinationsOfConditions(const Cell &cell, const Condition &co
 std::vector<bool*> Engine::getPossibleNeighboursVector(bool neighbours[3][3], int additionalNeighbours) {
     std::vector<bool*> possibleNeighbours;
     // tworzenie listy mozliwych do wyboru sasiadow
-    for (int i = 0; i < 2; ++i) {
-        for (int j = 0; j < 2; ++j) {
-            if (neighbours[i][j]) {
+    for (int i = 0; i < 3; ++i) {
+        for (int j = 0; j < 3; ++j) {
+            if (! (neighbours[i][j])) {
                 possibleNeighbours.push_back(&neighbours[i][j]);
             }
         }
     }
     // ustawianie stanu poczatkowego listy
     for (int i = 0; i < additionalNeighbours; ++i) { // nie moze byc ich wiecej niz w sumie sasiadow
-        *(possibleNeighbours[i]) = true;
+        *possibleNeighbours[i] = true;
     }
     return possibleNeighbours;
 }

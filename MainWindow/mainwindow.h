@@ -29,6 +29,8 @@ private slots:
 
     void on_spinBox_cellSize_valueChanged(int arg1);
 
+    void on_resetButton_clicked();
+
 private:
     Ui::MainWindow* ui;
     ConfigWindow* configWindow;

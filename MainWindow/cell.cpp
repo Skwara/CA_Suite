@@ -8,16 +8,15 @@ Cell::Cell() {
 Cell::Cell(uint row, uint col, QWidget * parent ) :
     QLabel(parent)
 {
-    stateId = 0;
+    setCell(0);
     this->row = row;
     this->col = col;
+
     uint cellSize = dataMan->cellSize;
     setMinimumHeight(cellSize);
     setMinimumWidth(cellSize);
     setMaximumHeight(cellSize);
     setMaximumWidth(cellSize);
-    QColor color = dataMan->statesListInfo[stateId].color;
-    setColor(color.red(), color.green(), color.blue());
 }
 
 void Cell::setColor(uint r, uint g, uint b)
@@ -37,8 +36,7 @@ void Cell::clicked()
     if (stateId >= dataMan->statesListInfo.size()) {
         stateId = 0;
     }
-    QColor color = dataMan->statesListInfo[stateId].color;
-    setColor(color.red(), color.green(), color.blue());
+    setCell(stateId);
 }
 
 void Cell::addNeighbours(const std::vector< std::vector<Cell*> >& cells) {
@@ -103,7 +101,9 @@ void Cell::addNeighbours(const std::vector< std::vector<Cell*> >& cells) {
         }else{
             neighbours.push_back(0);
         }
+
         neighbours.push_back(cells[row][col]);
+
         if (isRight) {
             neighbours.push_back(cells[row][col + 1]);
         }else{
@@ -139,4 +139,17 @@ void Cell::setNextState() {
     }
     values = nextValues;
 
+}
+
+void Cell::setCell(int stateId) {
+    this->stateId = stateId;
+    nextStateId = stateId;
+    foreach (double d, dataMan->statesListInfo[stateId].values) {
+        values.push_back((d));
+    }
+    foreach (double d, dataMan->statesListInfo[stateId].values) {
+        nextValues.push_back((d));
+    }
+    QColor color = dataMan->statesListInfo[stateId].color;
+    setColor(color.red(), color.green(), color.blue());
 }

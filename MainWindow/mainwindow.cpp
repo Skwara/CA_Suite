@@ -40,19 +40,18 @@ void MainWindow::paintCells(uint rows, uint cols)
         cells.push_back(cellsVec);
     }
 
-//    foreach (std::vector<Cell*> vec, cells) {
-//        foreach (Cell* c, vec) {
-//            c->addNeighbours(cells);
-//        }
-//    }
-    // TODO
-    //std::cout << cells.size() << "; " << cells[0].size() << std::endl;
-    for (uint i = 1; i < cells.size() - 1; ++i) { // TODO omijam brzegi
-        for (uint j = 1; j < cells[0].size() - 1; ++j) {
-            //std::cout << i << "; " << j << std::endl;
-            cells[i][j]->addNeighbours(cells);
+    foreach (std::vector<Cell*> vec, cells) {
+        foreach (Cell* c, vec) {
+            c->addNeighbours(cells);
         }
     }
+    // TODO
+    //std::cout << cells.size() << "; " << cells[0].size() << std::endl;
+//    for (uint i = 1; i < cells.size() - 1; ++i) { // TODO omijam brzegi
+//        for (uint j = 1; j < cells[0].size() - 1; ++j) {
+//            cells[i][j]->addNeighbours(cells);
+//        }
+//    }
 }
 
 void MainWindow::clearCells()
@@ -100,4 +99,12 @@ void MainWindow::configWindowClosed(int result)
 void MainWindow::on_spinBox_cellSize_valueChanged(int arg1)
 {
     dataMan.cellSize = arg1;
+}
+
+void MainWindow::on_resetButton_clicked()
+{
+    clearCells();
+    if (dataMan.statesListInfo.size() > 0) {
+        paintCells(dataMan.boardHeight, dataMan.boardWidth);
+    }
 }
